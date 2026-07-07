@@ -3,65 +3,121 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Travels by Iva&Šíma&Dal.</title>
+
+<title>Iva & Šíma & Dal na cestách</title>
 
 <style>
-body {
+
+body{
+    margin:0;
     font-family: Arial, sans-serif;
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 20px;
-    line-height: 1.6;
-    background: #f5f7f9;
+    background:#eef6fb;
+    color:#333;
 }
 
-header {
-    text-align: center;
-    padding: 40px 20px;
+.hero{
+    text-align:center;
+    padding:60px 20px;
+    background:linear-gradient(135deg,#4fc3f7,#81d4fa);
+    color:white;
 }
 
-h1 {
-    margin-bottom: 10px;
+.hero h1{
+    margin:0;
+    font-size:2.5rem;
 }
 
-.trip-card {
-    background: white;
-    border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 20px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+.hero p{
+    font-size:1.1rem;
+    opacity:0.95;
 }
 
-.trip-card a {
-    text-decoration: none;
-    color: #0066cc;
-    font-weight: bold;
+.container{
+    max-width:1000px;
+    margin:auto;
+    padding:30px 20px;
 }
 
-footer {
-    margin-top: 40px;
-    text-align: center;
-    color: #666;
+.card{
+    background:white;
+    border-radius:20px;
+    padding:25px;
+    box-shadow:0 4px 15px rgba(0,0,0,0.1);
+    margin-bottom:25px;
 }
+
+.badges{
+    margin:15px 0;
+}
+
+.badge{
+    display:inline-block;
+    background:#e3f2fd;
+    padding:8px 14px;
+    border-radius:20px;
+    margin:4px;
+}
+
+.button{
+    display:inline-block;
+    background:#0288d1;
+    color:white;
+    text-decoration:none;
+    padding:12px 20px;
+    border-radius:10px;
+    font-weight:bold;
+}
+
+.button:hover{
+    background:#0277bd;
+}
+
+footer{
+    text-align:center;
+    padding:30px;
+    color:#666;
+}
+
 </style>
 </head>
 
 <body>
 
-<header>
-    <h1>🌍 Travels by Iva&Šíma&Dal.</h1>
-    <p>Rodinný cestovní deník a inspirace na výlety.</p>
-</header>
+<section class="hero">
+    <h1>🌍 Iva & Šíma & Dal na cestách</h1>
+    <p>Rodinné cestování, zážitky a inspirace.</p>
+</section>
 
-<div class="trip-card">
-    <h2>Azory 2026</h2>
-    <p>8. 7. – 23. 7. 2026</p>
-    <p>Terceira • Pico • Faial • Flores • São Miguel</p>
-    <a href="azory-2026.html">Otevřít cestopis →</a>
+<div class="container">
+
+    <div class="card">
+        <h2>🏝️ Azory 2026</h2>
+
+        <p>
+        8. 7. – 23. 7. 2026
+        </p>
+
+        <div class="badges">
+            <span class="badge">Terceira</span>
+            <span class="badge">Pico</span>
+            <span class="badge">Faial</span>
+            <span class="badge">Flores</span>
+            <span class="badge">São Miguel</span>
+        </div>
+
+        <p>
+        Naše letní putování po Azorech.
+        </p>
+
+        <a class="button" href="azory-2026.html">
+            Otevřít cestopis →
+        </a>
+    </div>
+
 </div>
 
 <footer>
-    d-a-g.name
+    Iva • Šíma • Dal
 </footer>
 
 </body>
