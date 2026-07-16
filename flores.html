@@ -2,29 +2,13 @@
 <html lang="cs">
 <head>
   <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1"
-  >
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <title>Flores | Azory 2026</title>
 
-  <!-- Leaflet -->
   <link
     rel="stylesheet"
     href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-  >
-
-  <!-- Seskupování bodů na mapě -->
-  <link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css"
-  >
-
-  <link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css"
   >
 
   <style>
@@ -43,8 +27,7 @@
       padding: 48px 20px;
       color: white;
       text-align: center;
-      background:
-        linear-gradient(135deg, #087f6d, #42a58f);
+      background: linear-gradient(135deg, #087f6d, #42a58f);
     }
 
     header h1 {
@@ -67,8 +50,7 @@
       padding: 22px;
       background: white;
       border-radius: 18px;
-      box-shadow:
-        0 4px 16px rgba(0, 0, 0, 0.08);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
     }
 
     .card h2 {
@@ -79,6 +61,13 @@
       padding: 24px 10px;
       color: #607d8b;
       text-align: center;
+    }
+
+    .error-box {
+      padding: 12px 14px;
+      color: #8a1c1c;
+      border-radius: 12px;
+      background: #fff0f0;
     }
 
     /* Fotka dne */
@@ -103,8 +92,7 @@
 
     .nominations {
       display: grid;
-      grid-template-columns:
-        repeat(auto-fit, minmax(210px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
       gap: 14px;
     }
 
@@ -113,8 +101,7 @@
       overflow: hidden;
       border-radius: 15px;
       background: #eef5f2;
-      box-shadow:
-        0 2px 10px rgba(0, 0, 0, 0.07);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.07);
     }
 
     .nomination.is-winner {
@@ -122,7 +109,8 @@
       background: #fff9e8;
     }
 
-    .nomination-image-button {
+    .nomination-image-button,
+    .winner-image-button {
       display: block;
       width: 100%;
       padding: 0;
@@ -162,8 +150,7 @@
       background: #ffd75e;
       font-size: 0.82rem;
       font-weight: bold;
-      box-shadow:
-        0 2px 7px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 2px 7px rgba(0, 0, 0, 0.2);
     }
 
     .winner-section {
@@ -178,15 +165,6 @@
       margin: 0 0 12px;
       font-size: 1.15rem;
       font-weight: bold;
-    }
-
-    .winner-image-button {
-      display: block;
-      width: 100%;
-      padding: 0;
-      border: 0;
-      background: transparent;
-      cursor: pointer;
     }
 
     .winner-section img {
@@ -236,8 +214,7 @@
 
     .gallery {
       display: grid;
-      grid-template-columns:
-        repeat(auto-fill, minmax(250px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
       gap: 12px;
     }
 
@@ -264,26 +241,26 @@
       transform: scale(1.025);
     }
 
-    .gps-badge {
+    .gps-badge,
+    .award-badge {
       position: absolute;
-      right: 8px;
-      bottom: 8px;
       padding: 5px 8px;
-      color: white;
       border-radius: 12px;
-      background: rgba(0, 0, 0, 0.68);
       font-size: 0.78rem;
     }
 
+    .gps-badge {
+      right: 8px;
+      bottom: 8px;
+      color: white;
+      background: rgba(0, 0, 0, 0.68);
+    }
+
     .award-badge {
-      position: absolute;
       left: 8px;
       top: 8px;
-      padding: 5px 8px;
       color: #493400;
-      border-radius: 12px;
       background: #ffd75e;
-      font-size: 0.78rem;
       font-weight: bold;
     }
 
@@ -339,8 +316,7 @@
       }
 
       .nominations {
-        grid-template-columns:
-          repeat(3, minmax(0, 1fr));
+        grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 7px;
       }
 
@@ -363,8 +339,7 @@
       }
 
       .gallery {
-        grid-template-columns:
-          repeat(2, minmax(0, 1fr));
+        grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 8px;
       }
 
@@ -376,7 +351,6 @@
 </head>
 
 <body>
-
   <header>
     <h1>Flores</h1>
     <p>Azory 2026 · ostrov vodopádů</p>
@@ -385,20 +359,15 @@
   <main>
     <section class="card">
       <h2>Flores</h2>
-
       <p>
         Vodopády, zelené útesy, jezera a nejzápadnější
         část našeho putování po Azorech.
       </p>
-
-      <p>
-        Zápisek budeme postupně doplňovat.
-      </p>
+      <p>Zápisek budeme postupně doplňovat.</p>
     </section>
 
     <section class="card">
       <h2>🏆 Fotka dne</h2>
-
       <div id="photo-of-day">
         <p class="status">Načítám nominace…</p>
       </div>
@@ -413,8 +382,7 @@
       <div id="map"></div>
 
       <p class="map-note">
-        Na mapě jsou fotografie, které obsahují GPS polohu.
-        Blízké body se automaticky seskupují. Mapový podklad
+        Na mapě jsou fotografie s GPS polohou. Mapový podklad
         lze přepnout na satelitní snímek.
       </p>
     </section>
@@ -456,19 +424,9 @@
     <img id="lightbox-image" alt="">
   </div>
 
-  <script
-    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-  ></script>
-
-  <script
-    src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"
-  ></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
   <script>
-    /*
-     * ZÁKLADNÍ NASTAVENÍ
-     */
-
     const islandSlug = 'flores';
 
     const photoDirectory =
@@ -482,10 +440,6 @@
 
     const photoOfDayEndpoint =
       '/data/azory2026/photo-of-day.json';
-
-    /*
-     * PRVKY STRÁNKY
-     */
 
     const gallery =
       document.getElementById('gallery');
@@ -508,69 +462,33 @@
     const closeLightboxButton =
       document.getElementById('close-lightbox');
 
-    /*
-     * MAPA A PODKLADY
-     */
-
-    const map = L.map('map').setView(
-      [39.44, -31.20],
-      11
-    );
-
-    const positron = L.tileLayer(
-      'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
-      {
-        maxZoom: 20,
-        attribution:
-          '&copy; OpenStreetMap přispěvatelé &copy; CARTO'
-      }
-    );
-
-    const satellite = L.tileLayer(
-      'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-      {
-        maxZoom: 19,
-        attribution:
-          'Tiles &copy; Esri'
-      }
-    );
-
-    positron.addTo(map);
-
-    L.control.layers(
-      {
-        '🗺 Mapa': positron,
-        '🛰 Satelit': satellite
-      },
-      {},
-      {
-        collapsed: false
-      }
-    ).addTo(map);
-
-    const markerCluster = L.markerClusterGroup({
-      showCoverageOnHover: false,
-      maxClusterRadius: 45,
-      spiderfyOnMaxZoom: true
-    });
-
-    map.addLayer(markerCluster);
-
-    /*
-     * POMOCNÉ FUNKCE
-     */
-
     function originalUrl(fileName) {
-      return photoDirectory +
-        encodeURIComponent(fileName);
+      return photoDirectory + encodeURIComponent(fileName);
     }
 
     function thumbnailUrl(fileName, width = 600) {
-      return thumbnailEndpoint +
+      return (
+        thumbnailEndpoint +
         '?file=' +
         encodeURIComponent(fileName) +
         '&w=' +
-        width;
+        width
+      );
+    }
+
+    function attachThumbnailFallback(image, fileName) {
+      image.addEventListener(
+        'error',
+        () => {
+          if (image.dataset.fallbackUsed === 'true') {
+            return;
+          }
+
+          image.dataset.fallbackUsed = 'true';
+          image.src = originalUrl(fileName);
+        },
+        { once: true }
+      );
     }
 
     function openLightbox(url, altText) {
@@ -625,21 +543,7 @@
       ).format(date);
     }
 
-    /*
-     * FOTKA DNE
-     */
-
     function normalizePhotoOfDayData(data) {
-      /*
-       * Podpora obou variant:
-       *
-       * 1. Jeden objekt:
-       *    { "date": "...", ... }
-       *
-       * 2. Pole více dnů:
-       *    [ { "date": "...", ... } ]
-       */
-
       if (Array.isArray(data)) {
         return data;
       }
@@ -670,15 +574,16 @@
         'nomination-image-button';
 
       const image = document.createElement('img');
-
-      image.src =
-        thumbnailUrl(nomination.photo, 700);
-
+      image.src = thumbnailUrl(nomination.photo, 700);
       image.alt =
-        `Nominace ${nomination.person} – ${day.title}`;
-
+        `Nominace ${nomination.person} – ${day.title || 'Fotka dne'}`;
       image.loading = 'lazy';
       image.decoding = 'async';
+
+      attachThumbnailFallback(
+        image,
+        nomination.photo
+      );
 
       imageButton.addEventListener(
         'click',
@@ -697,20 +602,14 @@
 
       const person = document.createElement('div');
       person.className = 'nomination-person';
-      person.textContent =
-        `⭐ ${nomination.person}`;
+      person.textContent = `⭐ ${nomination.person}`;
 
       info.appendChild(person);
 
       if (nomination.comment) {
         const comment = document.createElement('p');
-
-        comment.className =
-          'nomination-comment';
-
-        comment.textContent =
-          nomination.comment;
-
+        comment.className = 'nomination-comment';
+        comment.textContent = nomination.comment;
         info.appendChild(comment);
       }
 
@@ -718,12 +617,9 @@
       card.appendChild(info);
 
       if (isWinner) {
-        const badge =
-          document.createElement('span');
-
+        const badge = document.createElement('span');
         badge.className = 'winner-badge';
         badge.textContent = '👑 Vítěz';
-
         card.appendChild(badge);
       }
 
@@ -735,24 +631,22 @@
         return null;
       }
 
-      const winnerNomination =
+      const nominationList =
         Array.isArray(day.nominations)
-          ? day.nominations.find(
-              nomination =>
-                nomination.photo === day.winner
-            )
-          : null;
+          ? day.nominations
+          : [];
 
-      const block =
-        document.createElement('div');
+      const winnerNomination =
+        nominationList.find(
+          nomination =>
+            nomination.photo === day.winner
+        );
 
+      const block = document.createElement('div');
       block.className = 'winner-section';
 
-      const title =
-        document.createElement('p');
-
+      const title = document.createElement('p');
       title.className = 'winner-title';
-
       title.textContent = winnerNomination
         ? `👑 Vítěz dne – ${winnerNomination.person}`
         : '👑 Vítěz dne';
@@ -764,17 +658,17 @@
       imageButton.className =
         'winner-image-button';
 
-      const image =
-        document.createElement('img');
-
-      image.src =
-        thumbnailUrl(day.winner, 1200);
-
+      const image = document.createElement('img');
+      image.src = thumbnailUrl(day.winner, 1200);
       image.alt =
-        `Vítězná fotografie – ${day.title}`;
-
+        `Vítězná fotografie – ${day.title || 'Fotka dne'}`;
       image.loading = 'lazy';
       image.decoding = 'async';
+
+      attachThumbnailFallback(
+        image,
+        day.winner
+      );
 
       imageButton.addEventListener(
         'click',
@@ -787,7 +681,6 @@
       );
 
       imageButton.appendChild(image);
-
       block.appendChild(title);
       block.appendChild(imageButton);
 
@@ -807,7 +700,6 @@
           '<p class="status">' +
           'Pro Flores zatím nejsou vybrané nominace.' +
           '</p>';
-
         return;
       }
 
@@ -894,159 +786,6 @@
         });
     }
 
-    async function loadPhotoOfDay() {
-      try {
-        const response = await fetch(
-          photoOfDayEndpoint,
-          {
-            cache: 'no-store'
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error(
-            `HTTP ${response.status}`
-          );
-        }
-
-        const data = await response.json();
-
-        renderPhotoOfDay(data);
-      } catch (error) {
-        console.error(
-          'Nominace se nepodařilo načíst:',
-          error
-        );
-
-        photoOfDayContainer.innerHTML =
-          '<p class="status">' +
-          'Nominace se nepodařilo načíst.' +
-          '</p>';
-      }
-    }
-
-    /*
-     * MAPA
-     */
-
-    function createPopupContent(image) {
-      const wrapper =
-        document.createElement('div');
-
-      const title =
-        document.createElement('p');
-
-      title.className = 'popup-title';
-      title.textContent =
-        formatPhotoDate(image.takenAt);
-
-      const thumbnail =
-        document.createElement('img');
-
-      thumbnail.className = 'popup-photo';
-
-      thumbnail.src =
-        thumbnailUrl(image.file, 420);
-
-      thumbnail.alt =
-        image.alt || 'Flores – Azory 2026';
-
-      thumbnail.loading = 'lazy';
-
-      thumbnail.addEventListener(
-        'click',
-        () => {
-          openLightbox(
-            originalUrl(image.file),
-            thumbnail.alt
-          );
-        }
-      );
-
-      wrapper.appendChild(title);
-      wrapper.appendChild(thumbnail);
-
-      return wrapper;
-    }
-
-    function renderMap(images) {
-      const geotaggedImages = images.filter(
-        image =>
-          image.hasGps === true &&
-          Number.isFinite(
-            Number(image.latitude)
-          ) &&
-          Number.isFinite(
-            Number(image.longitude)
-          )
-      );
-
-      gpsCount.textContent =
-        `(${geotaggedImages.length} z ${images.length} fotografií)`;
-
-      if (geotaggedImages.length === 0) {
-        return;
-      }
-
-      const bounds = [];
-
-      geotaggedImages.forEach(image => {
-        const latitude =
-          Number(image.latitude);
-
-        const longitude =
-          Number(image.longitude);
-
-        const marker = L.marker([
-          latitude,
-          longitude
-        ]);
-
-        /*
-         * Popup začíná bez fotky.
-         * Náhled se stáhne až při kliknutí.
-         */
-        marker.bindPopup(
-          '<p>Načítám náhled…</p>',
-          {
-            maxWidth: 250
-          }
-        );
-
-        marker.on(
-          'popupopen',
-          () => {
-            marker.setPopupContent(
-              createPopupContent(image)
-            );
-          }
-        );
-
-        marker.bindTooltip(
-          formatPhotoDate(image.takenAt),
-          {
-            direction: 'top'
-          }
-        );
-
-        markerCluster.addLayer(marker);
-
-        bounds.push([
-          latitude,
-          longitude
-        ]);
-      });
-
-      map.fitBounds(bounds, {
-        padding: [30, 30],
-        maxZoom: 14
-      });
-    }
-
-    /*
-     * BĚŽNÁ GALERIE
-     */
-
     function createAwardsIndex(days) {
       const nominations = new Set();
       const winners = new Set();
@@ -1077,6 +816,176 @@
         nominations,
         winners
       };
+    }
+
+    let map = null;
+    let markerLayer = null;
+
+    function initializeMap() {
+      if (
+        typeof L === 'undefined'
+      ) {
+        throw new Error(
+          'Knihovna Leaflet se nenačetla.'
+        );
+      }
+
+      map = L.map('map').setView(
+        [39.44, -31.20],
+        11
+      );
+
+      const positron = L.tileLayer(
+        'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+        {
+          maxZoom: 20,
+          attribution:
+            '&copy; OpenStreetMap přispěvatelé &copy; CARTO'
+        }
+      );
+
+      const satellite = L.tileLayer(
+        'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+        {
+          maxZoom: 19,
+          attribution:
+            'Tiles &copy; Esri'
+        }
+      );
+
+      positron.addTo(map);
+
+      L.control.layers(
+        {
+          '🗺 Mapa': positron,
+          '🛰 Satelit': satellite
+        },
+        {},
+        {
+          collapsed: false
+        }
+      ).addTo(map);
+
+      markerLayer = L.layerGroup();
+      markerLayer.addTo(map);
+    }
+
+    function createPopupContent(image) {
+      const wrapper =
+        document.createElement('div');
+
+      const title =
+        document.createElement('p');
+
+      title.className = 'popup-title';
+      title.textContent =
+        formatPhotoDate(image.takenAt);
+
+      const thumbnail =
+        document.createElement('img');
+
+      thumbnail.className = 'popup-photo';
+      thumbnail.src =
+        thumbnailUrl(image.file, 420);
+      thumbnail.alt =
+        image.alt || 'Flores – Azory 2026';
+      thumbnail.loading = 'lazy';
+
+      attachThumbnailFallback(
+        thumbnail,
+        image.file
+      );
+
+      thumbnail.addEventListener(
+        'click',
+        () => {
+          openLightbox(
+            originalUrl(image.file),
+            thumbnail.alt
+          );
+        }
+      );
+
+      wrapper.appendChild(title);
+      wrapper.appendChild(thumbnail);
+
+      return wrapper;
+    }
+
+    function renderMap(images) {
+      const geotaggedImages = images
+        .filter(
+          image =>
+            image.hasGps === true &&
+            Number.isFinite(
+              Number(image.latitude)
+            ) &&
+            Number.isFinite(
+              Number(image.longitude)
+            )
+        )
+        .map(
+          image => ({
+            ...image,
+            latitude: Number(image.latitude),
+            longitude: Number(image.longitude)
+          })
+        );
+
+      gpsCount.textContent =
+        `(${geotaggedImages.length} z ${images.length} fotografií)`;
+
+      if (
+        geotaggedImages.length === 0 ||
+        !map ||
+        !markerLayer
+      ) {
+        return;
+      }
+
+      const bounds = [];
+
+      geotaggedImages.forEach(image => {
+        const marker = L.marker([
+          image.latitude,
+          image.longitude
+        ]);
+
+        marker.bindPopup(
+          '<p>Načítám náhled…</p>',
+          {
+            maxWidth: 250
+          }
+        );
+
+        marker.on(
+          'popupopen',
+          () => {
+            marker.setPopupContent(
+              createPopupContent(image)
+            );
+          }
+        );
+
+        marker.bindTooltip(
+          formatPhotoDate(image.takenAt),
+          {
+            direction: 'top'
+          }
+        );
+
+        markerLayer.addLayer(marker);
+
+        bounds.push([
+          image.latitude,
+          image.longitude
+        ]);
+      });
+
+      map.fitBounds(bounds, {
+        padding: [30, 30],
+        maxZoom: 14
+      });
     }
 
     function renderGallery(
@@ -1111,10 +1020,14 @@
 
         img.src =
           thumbnailUrl(image.file, 650);
-
         img.alt = alt;
         img.loading = 'lazy';
         img.decoding = 'async';
+
+        attachThumbnailFallback(
+          img,
+          image.file
+        );
 
         button.appendChild(img);
 
@@ -1124,7 +1037,6 @@
 
           badge.className = 'gps-badge';
           badge.textContent = '📍 mapa';
-
           button.appendChild(badge);
         }
 
@@ -1136,7 +1048,6 @@
 
           award.className = 'award-badge';
           award.textContent = '👑 Vítěz';
-
           button.appendChild(award);
         } else if (
           awards.nominations.has(image.file)
@@ -1146,7 +1057,6 @@
 
           award.className = 'award-badge';
           award.textContent = '⭐ Nominace';
-
           button.appendChild(award);
         }
 
@@ -1164,17 +1074,126 @@
       });
     }
 
-    /*
-     * SPOLEČNÉ NAČTENÍ
-     */
+    async function fetchJson(url, label) {
+      const response = await fetch(
+        url,
+        {
+          cache: 'no-store'
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(
+          `${label}: HTTP ${response.status}`
+        );
+      }
+
+      return response.json();
+    }
 
     async function loadPageData() {
+      let galleryData = null;
+      let photoOfDayData = [];
+
       try {
-        const [
-          galleryResponse,
-          photoOfDayResponse
-        ] = await Promise.all([
-          fetch(
-            galleryEndpoint,
-            {
-              cache:
+        galleryData = await fetchJson(
+          galleryEndpoint,
+          'Galerie'
+        );
+
+        if (!Array.isArray(galleryData.images)) {
+          throw new Error(
+            'Galerie má neplatný formát.'
+          );
+        }
+      } catch (error) {
+        console.error(error);
+
+        gallery.innerHTML =
+          '<p class="error-box">' +
+          'Fotografie se nepodařilo načíst.' +
+          '</p>';
+
+        gpsCount.textContent =
+          '(mapu nelze načíst)';
+
+        return;
+      }
+
+      try {
+        photoOfDayData = await fetchJson(
+          photoOfDayEndpoint,
+          'Fotka dne'
+        );
+
+        renderPhotoOfDay(
+          photoOfDayData
+        );
+      } catch (error) {
+        console.error(error);
+
+        photoOfDayContainer.innerHTML =
+          '<p class="error-box">' +
+          'Nominace se nepodařilo načíst.' +
+          '</p>';
+      }
+
+      const awards =
+        createAwardsIndex(
+          photoOfDayData
+        );
+
+      renderGallery(
+        galleryData.images,
+        awards
+      );
+
+      try {
+        initializeMap();
+        renderMap(galleryData.images);
+      } catch (error) {
+        console.error(error);
+
+        gpsCount.textContent =
+          '(mapu se nepodařilo spustit)';
+
+        const mapElement =
+          document.getElementById('map');
+
+        mapElement.innerHTML =
+          '<p class="error-box">' +
+          'Mapu se nepodařilo načíst.' +
+          '</p>';
+      }
+    }
+
+    closeLightboxButton.addEventListener(
+      'click',
+      closeLightbox
+    );
+
+    lightbox.addEventListener(
+      'click',
+      event => {
+        if (
+          event.target === lightbox ||
+          event.target === lightboxImage
+        ) {
+          closeLightbox();
+        }
+      }
+    );
+
+    document.addEventListener(
+      'keydown',
+      event => {
+        if (event.key === 'Escape') {
+          closeLightbox();
+        }
+      }
+    );
+
+    loadPageData();
+  </script>
+</body>
+</html>
