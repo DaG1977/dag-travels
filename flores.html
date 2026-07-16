@@ -2,9 +2,27 @@
 <html lang="cs">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
 
   <title>Flores | Azory 2026</title>
+
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  >
+
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css"
+  >
+
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css"
+  >
 
   <style>
     * {
@@ -19,7 +37,7 @@
     }
 
     header {
-      padding: 45px 20px;
+      padding: 46px 20px;
       color: white;
       text-align: center;
       background: linear-gradient(135deg, #087f6d, #42a58f);
@@ -27,17 +45,17 @@
 
     header h1 {
       margin: 0 0 8px;
-      font-size: clamp(2.3rem, 7vw, 4rem);
+      font-size: clamp(2.4rem, 7vw, 4rem);
     }
 
     header p {
       margin: 0;
-      font-size: 1.15rem;
+      font-size: 1.1rem;
     }
 
     main {
       width: min(1400px, calc(100% - 28px));
-      margin: 25px auto;
+      margin: 24px auto;
     }
 
     .card {
@@ -52,13 +70,29 @@
       margin-top: 0;
     }
 
+    #map {
+      width: 100%;
+      height: 500px;
+      overflow: hidden;
+      border-radius: 14px;
+      background: #dce9e5;
+    }
+
+    .map-note {
+      margin-bottom: 0;
+      color: #607d8b;
+      font-size: 0.92rem;
+    }
+
     .gallery {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 14px;
+      grid-template-columns:
+        repeat(auto-fill, minmax(250px, 1fr));
+      gap: 12px;
     }
 
     .gallery-button {
+      position: relative;
       display: block;
       padding: 0;
       overflow: hidden;
@@ -71,7 +105,7 @@
     .gallery img {
       display: block;
       width: 100%;
-      height: 260px;
+      height: 250px;
       object-fit: cover;
       transition: transform 0.2s ease;
     }
@@ -80,9 +114,20 @@
       transform: scale(1.025);
     }
 
+    .gps-badge {
+      position: absolute;
+      right: 8px;
+      bottom: 8px;
+      padding: 5px 8px;
+      color: white;
+      border-radius: 12px;
+      background: rgba(0, 0, 0, 0.65);
+      font-size: 0.78rem;
+    }
+
     .status {
       grid-column: 1 / -1;
-      padding: 30px 10px;
+      padding: 28px 10px;
       text-align: center;
       color: #607d8b;
     }
@@ -93,6 +138,28 @@
       text-decoration: none;
     }
 
+    .popup-gallery {
+      display: grid;
+      grid-template-columns: repeat(2, 90px);
+      gap: 5px;
+      max-height: 260px;
+      overflow-y: auto;
+    }
+
+    .popup-gallery img {
+      display: block;
+      width: 90px;
+      height: 75px;
+      object-fit: cover;
+      border-radius: 7px;
+      cursor: pointer;
+    }
+
+    .popup-title {
+      margin: 0 0 8px;
+      font-weight: bold;
+    }
+
     .lightbox {
       display: none;
       position: fixed;
@@ -101,7 +168,7 @@
       align-items: center;
       justify-content: center;
       padding: 20px;
-      background: rgba(0, 0, 0, 0.93);
+      background: rgba(0, 0, 0, 0.94);
     }
 
     .lightbox.active {
@@ -116,8 +183,8 @@
 
     .close {
       position: fixed;
-      top: 12px;
-      right: 18px;
+      top: 10px;
+      right: 17px;
       padding: 8px 14px;
       border: 0;
       color: white;
@@ -127,17 +194,21 @@
     }
 
     @media (max-width: 650px) {
+      #map {
+        height: 400px;
+      }
+
       .gallery {
         grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 8px;
       }
 
       .gallery img {
-        height: 175px;
+        height: 170px;
       }
 
       .card {
-        padding: 16px;
+        padding: 15px;
       }
     }
   </style>
@@ -152,19 +223,37 @@
 
   <main>
     <section class="card">
-      <h2>Den na Flores</h2>
+      <h2>Flores</h2>
 
       <p>
-        Vodopády, mlha, zelené útesy a nejkrásnější ostrov Azor.
+        Vodopády, zelené útesy, jezera a nejzápadnější
+        část našeho putování po Azorech.
       </p>
 
       <p>
-        Text později doplním z tabletu.
+        Zápisek budeme postupně doplňovat.
       </p>
     </section>
 
     <section class="card">
-      <h2>Fotogalerie <span id="photo-count"></span></h2>
+      <h2>
+        Mapa fotografií
+        <span id="gps-count"></span>
+      </h2>
+
+      <div id="map"></div>
+
+      <p class="map-note">
+        Fotografie pořízené blízko sebe se na mapě seskupují.
+        Po kliknutí na bod se zobrazí náhledy fotografií.
+      </p>
+    </section>
+
+    <section class="card">
+      <h2>
+        Fotogalerie
+        <span id="photo-count"></span>
+      </h2>
 
       <div id="gallery" class="gallery">
         <p class="status">Načítám fotografie…</p>
@@ -183,7 +272,6 @@
     class="lightbox"
     role="dialog"
     aria-modal="true"
-    aria-label="Zvětšená fotografie"
   >
     <button
       id="close-lightbox"
@@ -197,6 +285,14 @@
     <img id="lightbox-image" alt="">
   </div>
 
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+  ></script>
+
+  <script
+    src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"
+  ></script>
+
   <script>
     const galleryEndpoint =
       'https://photos.d-a-g.name/azory2026/flores/gallery.php';
@@ -206,14 +302,43 @@
 
     const gallery = document.getElementById('gallery');
     const photoCount = document.getElementById('photo-count');
+    const gpsCount = document.getElementById('gps-count');
+
     const lightbox = document.getElementById('lightbox');
-    const lightboxImage = document.getElementById('lightbox-image');
+    const lightboxImage =
+      document.getElementById('lightbox-image');
+
     const closeLightboxButton =
       document.getElementById('close-lightbox');
 
-    function openLightbox(imageUrl, altText) {
-      lightboxImage.src = imageUrl;
-      lightboxImage.alt = altText;
+    const map = L.map('map').setView(
+      [39.44, -31.20],
+      11
+    );
+
+    L.tileLayer(
+      'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+      {
+        maxZoom: 19,
+        attribution:
+          '&copy; OpenStreetMap přispěvatelé'
+      }
+    ).addTo(map);
+
+    const markerCluster = L.markerClusterGroup({
+      showCoverageOnHover: false,
+      maxClusterRadius: 45
+    });
+
+    map.addLayer(markerCluster);
+
+    function imageUrl(fileName) {
+      return imageBaseUrl + encodeURIComponent(fileName);
+    }
+
+    function openLightbox(url, altText) {
+      lightboxImage.src = url;
+      lightboxImage.alt = altText || '';
       lightbox.classList.add('active');
       document.body.style.overflow = 'hidden';
     }
@@ -224,6 +349,123 @@
       document.body.style.overflow = '';
     }
 
+    function createPopup(image) {
+      const wrapper = document.createElement('div');
+
+      const title = document.createElement('p');
+      title.className = 'popup-title';
+      title.textContent = image.takenAt
+        ? `Pořízeno ${image.takenAt}`
+        : 'Fotografie z Flores';
+
+      const thumbnail = document.createElement('img');
+      thumbnail.src = imageUrl(image.file);
+      thumbnail.alt = image.alt || 'Flores – Azory 2026';
+      thumbnail.style.width = '180px';
+      thumbnail.style.maxHeight = '150px';
+      thumbnail.style.objectFit = 'cover';
+      thumbnail.style.borderRadius = '8px';
+      thumbnail.style.cursor = 'pointer';
+
+      thumbnail.addEventListener('click', () => {
+        openLightbox(
+          imageUrl(image.file),
+          thumbnail.alt
+        );
+      });
+
+      wrapper.appendChild(title);
+      wrapper.appendChild(thumbnail);
+
+      return wrapper;
+    }
+
+    function renderMap(images) {
+      const geotaggedImages = images.filter(image =>
+        image.hasGps === true &&
+        Number.isFinite(Number(image.latitude)) &&
+        Number.isFinite(Number(image.longitude))
+      );
+
+      gpsCount.textContent =
+        `(${geotaggedImages.length} z ${images.length} fotografií)`;
+
+      if (geotaggedImages.length === 0) {
+        return;
+      }
+
+      const bounds = [];
+
+      geotaggedImages.forEach(image => {
+        const latitude = Number(image.latitude);
+        const longitude = Number(image.longitude);
+
+        const marker = L.marker([
+          latitude,
+          longitude
+        ]);
+
+        marker.bindPopup(createPopup(image), {
+          maxWidth: 230
+        });
+
+        marker.bindTooltip(
+          image.takenAt || 'Fotografie',
+          {
+            direction: 'top'
+          }
+        );
+
+        markerCluster.addLayer(marker);
+
+        bounds.push([
+          latitude,
+          longitude
+        ]);
+      });
+
+      map.fitBounds(bounds, {
+        padding: [30, 30],
+        maxZoom: 14
+      });
+    }
+
+    function renderGallery(images) {
+      photoCount.textContent = `(${images.length})`;
+      gallery.innerHTML = '';
+
+      images.forEach(image => {
+        const url = imageUrl(image.file);
+        const alt =
+          image.alt || 'Flores – Azory 2026';
+
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'gallery-button';
+
+        const img = document.createElement('img');
+        img.src = url;
+        img.alt = alt;
+        img.loading = 'lazy';
+        img.decoding = 'async';
+
+        button.appendChild(img);
+
+        if (image.hasGps === true) {
+          const badge = document.createElement('span');
+          badge.className = 'gps-badge';
+          badge.textContent = '📍 mapa';
+          button.appendChild(badge);
+        }
+
+        button.addEventListener('click', () => {
+          openLightbox(url, alt);
+        });
+
+        gallery.appendChild(button);
+      });
+    }
+
     async function loadGallery() {
       try {
         const response = await fetch(galleryEndpoint, {
@@ -231,67 +473,42 @@
         });
 
         if (!response.ok) {
-          throw new Error(`HTTP chyba ${response.status}`);
+          throw new Error(`HTTP ${response.status}`);
         }
 
         const data = await response.json();
 
         if (!Array.isArray(data.images)) {
-          throw new Error('Neplatný formát odpovědi galerie.');
+          throw new Error('Neplatný formát galerie.');
         }
 
         if (data.images.length === 0) {
           gallery.innerHTML =
-            '<p class="status">V galerii zatím nejsou žádné fotografie.</p>';
+            '<p class="status">Galerie je zatím prázdná.</p>';
           return;
         }
 
-        photoCount.textContent = `(${data.images.length})`;
-        gallery.innerHTML = '';
-
-        data.images.forEach((image) => {
-          const imageUrl =
-            imageBaseUrl + encodeURIComponent(image.file);
-
-          const altText =
-            image.alt || 'Flores – Azory 2026';
-
-          const button = document.createElement('button');
-          button.type = 'button';
-          button.className = 'gallery-button';
-          button.setAttribute(
-            'aria-label',
-            `Otevřít fotografii ${image.file}`
-          );
-
-          const img = document.createElement('img');
-          img.src = imageUrl;
-          img.alt = altText;
-          img.loading = 'lazy';
-          img.decoding = 'async';
-
-          button.addEventListener('click', () => {
-            openLightbox(imageUrl, altText);
-          });
-
-          button.appendChild(img);
-          gallery.appendChild(button);
-        });
+        renderGallery(data.images);
+        renderMap(data.images);
       } catch (error) {
-        console.error('Galerii se nepodařilo načíst:', error);
+        console.error(error);
 
         gallery.innerHTML = `
           <p class="status">
             Fotografie se nepodařilo načíst.
-            Zkus stránku znovu načíst.
           </p>
         `;
+
+        gpsCount.textContent = '(mapu nelze načíst)';
       }
     }
 
-    closeLightboxButton.addEventListener('click', closeLightbox);
+    closeLightboxButton.addEventListener(
+      'click',
+      closeLightbox
+    );
 
-    lightbox.addEventListener('click', (event) => {
+    lightbox.addEventListener('click', event => {
       if (
         event.target === lightbox ||
         event.target === lightboxImage
@@ -300,7 +517,7 @@
       }
     });
 
-    document.addEventListener('keydown', (event) => {
+    document.addEventListener('keydown', event => {
       if (event.key === 'Escape') {
         closeLightbox();
       }
