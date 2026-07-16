@@ -1,0 +1,25 @@
+[
+  {
+    "date": "2026-07-16",
+    "title": "První den na Flores",
+    "island": "flores",
+    "nominations": [
+      {
+        "person": "Dal",
+        "photo": "20260716_141142.JPG",
+        "comment": ""
+      },
+      {
+        "person": "Iva",
+        "photo": "IMG_7221.JPG",
+        "comment": ""
+      },
+      {
+        "person": "Šíma",
+        "photo": "PXL_20260716_152502207.MP.jpg",
+        "comment": ""
+      }
+    ],
+    "winner": "PXL_20260716_152502207.MP.jpg"
+  }
+]
