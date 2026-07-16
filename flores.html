@@ -3,85 +3,150 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flores | Azory 2026</title>
+<title>Flores 2026</title>
 
 <style>
-body{
+body {
     font-family: Arial, sans-serif;
-    margin:0;
-    background:#f5f7fa;
+    margin: 0;
+    background: #f5f5f5;
 }
 
-header{
-    background:#1f8f7a;
-    color:white;
-    padding:40px;
-    text-align:center;
+header {
+    background: #0a7c6b;
+    color: white;
+    padding: 30px;
+    text-align: center;
 }
 
-.container{
-    max-width:1200px;
-    margin:auto;
-    padding:20px;
+main {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
 }
 
-.gallery{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-    gap:15px;
+.intro {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
 }
 
-.gallery img{
-    width:100%;
-    height:250px;
-    object-fit:cover;
-    border-radius:12px;
+.gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 15px;
 }
 
-.card{
-    background:white;
-    padding:20px;
-    border-radius:16px;
-    margin-bottom:20px;
+.gallery img {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.gallery img:hover {
+    transform: scale(1.02);
+}
+
+.lightbox {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.9);
+    z-index: 9999;
+}
+
+.lightbox img {
+    max-width: 95%;
+    max-height: 95%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.lightbox.active {
+    display: block;
 }
 </style>
-
 </head>
+
 <body>
 
 <header>
-    <h1>Flores</h1>
-    <p>15.–18. 7. 2026</p>
+    <h1>Flores 🇵🇹</h1>
+    <p>Azory 2026</p>
 </header>
 
-<div class="container">
+<main>
 
-    <div class="card">
-        <h2>Nejzápadnější ostrov Azor</h2>
-        <p>
-            Ostrov vodopádů, zelených údolí a nekonečných výhledů.
-            Text doplníme později.
-        </p>
-    </div>
+<div class="intro">
+    <h2>Den na Flores</h2>
 
-    <div class="card">
-        <h2>Fotogalerie</h2>
+    <p>
+        Vodopády, mlha, zelené útesy a nejkrásnější ostrov Azor.
+    </p>
 
-        <div class="gallery">
-
-            <a href="https://photos.d-a-g.name/azory2026/flores/20260716_120039.JPG">
-                <img src="https://photos.d-a-g.name/azory2026/flores/20260716_120039.JPG">
-            </a>
-
-        </div>
-
-    </div>
-
-    <div class="card">
-        <a href="azory-2026.html">← Zpět na Azory</a>
-    </div>
-
+    <p>
+        Text později doplním z tabletu.
+    </p>
 </div>
+
+<div class="gallery" id="gallery"></div>
+
+</main>
+
+<div class="lightbox" id="lightbox">
+    <img id="lightboxImage">
+</div>
+
+<script>
+
+const galleryEndpoint =
+'https://photos.d-a-g.name/azory2026/flores/gallery.php';
+
+const imageBaseUrl =
+'https://photos.d-a-g.name/azory2026/flores/';
+
+async function loadGallery() {
+
+    const response = await fetch(galleryEndpoint);
+    const images = await response.json();
+
+    const gallery = document.getElementById('gallery');
+
+    images.forEach(file => {
+
+        const img = document.createElement('img');
+
+        img.src = imageBaseUrl + file;
+        img.loading = 'lazy';
+
+        img.onclick = () => {
+            document.getElementById('lightboxImage').src =
+                imageBaseUrl + file;
+
+            document.getElementById('lightbox')
+                .classList.add('active');
+        };
+
+        gallery.appendChild(img);
+    });
+}
+
+document
+.getElementById('lightbox')
+.onclick = () =>
+document
+.getElementById('lightbox')
+.classList.remove('active');
+
+loadGallery();
+
+</script>
 
 </body>
 </html>
