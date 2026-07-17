@@ -43,7 +43,24 @@
   "date": "2026-07-17",
   "title": "Corvo",
   "island": "2026-07-17-corvo",
-  "nominations": [],
-  "winner": ""
-}
+  "nominations": [
+      {
+        "person": "Dal",
+        "photo": "20260717_134301.JPG",
+        "comment": ""
+      },
+      {
+        "person": "Iva",
+        "photo": "IMG_7279.jpeg",
+        "comment": ""
+      },
+      {
+        "person": "Šíma",
+        "photo": "PXL_20260717_115023616.jpg",
+        "comment": ""
+      }
+    ],
+    "winner": "20260717_134301.JPG"
+  },
+
 ]
