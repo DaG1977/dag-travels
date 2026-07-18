@@ -452,39 +452,6 @@ const photoDirectory =
     const gpsCount =
       document.getElementById('gps-count');
 
-const travelRoutes = [
-  {
-    from: [39.458, -31.132],   // Flores
-    to:   [37.741, -25.675],   // São Miguel
-    color: "#2563eb"
-  }
-];
-
-travelRoutes.forEach(route => {
-  L.polyline(
-    [route.from, route.to],
-    {
-      color: route.color,
-      weight: 3,
-      opacity: 0.8,
-      dashArray: "10 8"
-    }
-  ).addTo(map);
-});
-
-const planeIcon = L.divIcon({
-  className: "plane-icon",
-  html: "✈️",
-  iconSize: [24,24]
-});
-
-L.marker(
-  [
-    (route.from[0] + route.to[0]) / 2,
-    (route.from[1] + route.to[1]) / 2
-  ],
-  { icon: planeIcon }
-).addTo(map);
     const photoOfDayContainer =
       document.getElementById('photo-of-day');
 
@@ -1227,6 +1194,46 @@ L.marker(
         }
       }
     );
+
+const travelRoutes = [
+  {
+    from: [39.455, -31.131], // letiště Flores
+    to: [37.741, -25.698],   // letiště Ponta Delgada
+    icon: '✈️'
+  }
+];
+
+const planeIcon = L.divIcon({
+  className: 'plane-icon',
+  html: '✈️',
+  iconSize: [30, 30],
+  iconAnchor: [15, 15]
+});
+
+travelRoutes.forEach(route => {
+  L.polyline(
+    [route.from, route.to],
+    {
+      color: '#2563eb',
+      weight: 3,
+      opacity: 0.8,
+      dashArray: '10 8'
+    }
+  ).addTo(map);
+
+  const middlePoint = [
+    (route.from[0] + route.to[0]) / 2,
+    (route.from[1] + route.to[1]) / 2
+  ];
+
+  L.marker(
+    middlePoint,
+    {
+      icon: planeIcon,
+      interactive: false
+    }
+  ).addTo(map);
+});
 
     loadPageData();
   </script>
