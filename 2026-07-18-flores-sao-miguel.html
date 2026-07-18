@@ -823,6 +823,11 @@ const photoDirectory =
     let map = null;
     let markerLayer = null;
 
+    const travelRoute = {
+      from: [39.455, -31.131], // letiště Flores
+      to: [37.741, -25.698]    // letiště Ponta Delgada
+    };
+
     function initializeMap() {
       if (
         typeof L === 'undefined'
@@ -833,9 +838,9 @@ const photoDirectory =
       }
 
       map = L.map('map').setView(
-  [39.69, -31.11],
-  12
-);
+        [38.57, -28.05],
+        8
+      );
 
       const positron = L.tileLayer(
         'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
@@ -870,6 +875,36 @@ const photoDirectory =
 
       markerLayer = L.layerGroup();
       markerLayer.addTo(map);
+
+      const planeIcon = L.divIcon({
+        className: 'plane-icon',
+        html: '✈️',
+        iconSize: [30, 30],
+        iconAnchor: [15, 15]
+      });
+
+      L.polyline(
+        [travelRoute.from, travelRoute.to],
+        {
+          color: '#2563eb',
+          weight: 3,
+          opacity: 0.8,
+          dashArray: '10 8'
+        }
+      ).addTo(map);
+
+      const middlePoint = [
+        (travelRoute.from[0] + travelRoute.to[0]) / 2,
+        (travelRoute.from[1] + travelRoute.to[1]) / 2
+      ];
+
+      L.marker(
+        middlePoint,
+        {
+          icon: planeIcon,
+          interactive: false
+        }
+      ).addTo(map);
     }
 
     function createPopupContent(image) {
@@ -945,7 +980,10 @@ const photoDirectory =
         return;
       }
 
-      const bounds = [];
+      const bounds = [
+        travelRoute.from,
+        travelRoute.to
+      ];
 
       geotaggedImages.forEach(image => {
         const marker = L.marker([
@@ -1194,46 +1232,6 @@ const photoDirectory =
         }
       }
     );
-
-const travelRoutes = [
-  {
-    from: [39.455, -31.131], // letiště Flores
-    to: [37.741, -25.698],   // letiště Ponta Delgada
-    icon: '✈️'
-  }
-];
-
-const planeIcon = L.divIcon({
-  className: 'plane-icon',
-  html: '✈️',
-  iconSize: [30, 30],
-  iconAnchor: [15, 15]
-});
-
-travelRoutes.forEach(route => {
-  L.polyline(
-    [route.from, route.to],
-    {
-      color: '#2563eb',
-      weight: 3,
-      opacity: 0.8,
-      dashArray: '10 8'
-    }
-  ).addTo(map);
-
-  const middlePoint = [
-    (route.from[0] + route.to[0]) / 2,
-    (route.from[1] + route.to[1]) / 2
-  ];
-
-  L.marker(
-    middlePoint,
-    {
-      icon: planeIcon,
-      interactive: false
-    }
-  ).addTo(map);
-});
 
     loadPageData();
   </script>
