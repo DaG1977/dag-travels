@@ -842,9 +842,13 @@ function createWinnerSection(day) {
             );
           }
 
-          if (day.winner) {
-            winners.add(day.winner);
-          }
+      if (day.winner) {
+  const dayWinners = Array.isArray(day.winner)
+    ? day.winner
+    : [day.winner];
+
+  dayWinners.forEach(photo => winners.add(photo));
+}
         });
 
       return {
