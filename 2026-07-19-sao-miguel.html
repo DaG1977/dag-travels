@@ -654,7 +654,7 @@ const photoDirectory =
       return card;
     }
 
-    function createWinnerSection(day) {
+function createWinnerSection(day) {
   if (!day.winner) {
     return null;
   }
@@ -683,6 +683,14 @@ const photoDirectory =
 
   block.appendChild(title);
 
+  const gallery = document.createElement('div');
+  gallery.className =
+    winners.length === 1
+      ? 'winner-gallery single'
+      : 'winner-gallery';
+
+  block.appendChild(gallery);
+
   winners.forEach(file => {
     const imageButton = document.createElement('button');
     imageButton.type = 'button';
@@ -690,7 +698,8 @@ const photoDirectory =
 
     const image = document.createElement('img');
     image.src = thumbnailUrl(file, 1200);
-    image.alt = `Vítězná fotografie – ${day.title || 'Fotka dne'}`;
+    image.alt =
+      `Vítězná fotografie – ${day.title || 'Fotka dne'}`;
     image.loading = 'lazy';
     image.decoding = 'async';
 
@@ -704,12 +713,11 @@ const photoDirectory =
     });
 
     imageButton.appendChild(image);
-    block.appendChild(imageButton);
+    gallery.appendChild(imageButton);
   });
 
   return block;
 }
-
     function renderPhotoOfDay(rawDays) {
       const days =
         normalizePhotoOfDayData(rawDays);
