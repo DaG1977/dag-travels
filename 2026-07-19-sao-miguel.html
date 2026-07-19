@@ -629,65 +629,60 @@ const photoDirectory =
     }
 
     function createWinnerSection(day) {
-      if (!day.winner) {
-        return null;
-      }
+  if (!day.winner) {
+    return null;
+  }
 
-      const nominationList =
-        Array.isArray(day.nominations)
-          ? day.nominations
-          : [];
+  const winners = Array.isArray(day.winner)
+    ? day.winner
+    : [day.winner];
 
-      const winnerNomination =
-        nominationList.find(
-          nomination =>
-            nomination.photo === day.winner
-        );
+  const nominationList = Array.isArray(day.nominations)
+    ? day.nominations
+    : [];
 
-      const block = document.createElement('div');
-      block.className = 'winner-section';
+  const winnerNames = nominationList
+    .filter(nomination => winners.includes(nomination.photo))
+    .map(nomination => nomination.person);
 
-      const title = document.createElement('p');
-      title.className = 'winner-title';
-      title.textContent = winnerNomination
-        ? `👑 Vítěz dne – ${winnerNomination.person}`
-        : '👑 Vítěz dne';
+  const block = document.createElement('div');
+  block.className = 'winner-section';
 
-      const imageButton =
-        document.createElement('button');
+  const title = document.createElement('p');
+  title.className = 'winner-title';
+  title.textContent =
+    winnerNames.length > 0
+      ? `👑 ${winners.length === 1 ? 'Vítěz dne' : 'Vítězové dne'} – ${winnerNames.join(', ')}`
+      : `👑 ${winners.length === 1 ? 'Vítěz dne' : 'Vítězové dne'}`;
 
-      imageButton.type = 'button';
-      imageButton.className =
-        'winner-image-button';
+  block.appendChild(title);
 
-      const image = document.createElement('img');
-      image.src = thumbnailUrl(day.winner, 1200);
-      image.alt =
-        `Vítězná fotografie – ${day.title || 'Fotka dne'}`;
-      image.loading = 'lazy';
-      image.decoding = 'async';
+  winners.forEach(file => {
+    const imageButton = document.createElement('button');
+    imageButton.type = 'button';
+    imageButton.className = 'winner-image-button';
 
-      attachThumbnailFallback(
-        image,
-        day.winner
+    const image = document.createElement('img');
+    image.src = thumbnailUrl(file, 1200);
+    image.alt = `Vítězná fotografie – ${day.title || 'Fotka dne'}`;
+    image.loading = 'lazy';
+    image.decoding = 'async';
+
+    attachThumbnailFallback(image, file);
+
+    imageButton.addEventListener('click', () => {
+      openLightbox(
+        originalUrl(file),
+        image.alt
       );
+    });
 
-      imageButton.addEventListener(
-        'click',
-        () => {
-          openLightbox(
-            originalUrl(day.winner),
-            image.alt
-          );
-        }
-      );
+    imageButton.appendChild(image);
+    block.appendChild(imageButton);
+  });
 
-      imageButton.appendChild(image);
-      block.appendChild(title);
-      block.appendChild(imageButton);
-
-      return block;
-    }
+  return block;
+}
 
     function renderPhotoOfDay(rawDays) {
       const days =
