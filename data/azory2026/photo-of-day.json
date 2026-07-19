@@ -20,7 +20,7 @@
         "comment": ""
       }
     ],
-    "winner": "PXL_20260716_152502207.MP.jpg"
+    "winner":	"PXL_20260716_152502207.MP.jpg"
   },
 
 {
@@ -107,6 +107,10 @@
         "comment": ""
       }
     ],
-    "winner": "IMG_7367.jpeg"
+    "winner": [
+									"IMG_7490.jpeg",
+									"20260719_171006.JPG",
+						"PXL_20260719_170842604.jpg"
+								]
   }
 ]
