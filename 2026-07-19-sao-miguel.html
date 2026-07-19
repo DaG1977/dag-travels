@@ -587,8 +587,12 @@ const photoDirectory =
       const card = document.createElement('article');
       card.className = 'nomination';
 
-      const isWinner =
-        nomination.photo === day.winner;
+      const winners = Array.isArray(day.winner)
+  ? day.winner
+  : [day.winner];
+
+const isWinner =
+  winners.includes(nomination.photo);
 
       if (isWinner) {
         card.classList.add('is-winner');
