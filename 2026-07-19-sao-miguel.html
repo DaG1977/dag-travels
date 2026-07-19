@@ -363,6 +363,11 @@
       <p>Zápisek budeme postupně doplňovat.</p>
     </section>
 
+<section id="weather-card" class="card" style="display:none;">
+  <h2>🌤️ Jaké jsme měli počasí</h2>
+  <div id="weather-content"></div>
+</section>
+
     <section class="card">
       <h2>🏆 Fotka dne</h2>
       <div id="photo-of-day">
@@ -1189,6 +1194,30 @@ const photoDirectory =
         }
       }
     );
+
+async function loadWeather() {
+    try {
+        const response = await fetch("data/azory2026/weather-2026-07-19.json");
+        const data = await response.json();
+
+        const container = document.getElementById("weather-content");
+
+        container.innerHTML = data.stops.map(stop => `
+            <div class="weather-item">
+                <strong>${stop.icon} ${stop.title}</strong><br>
+                🌤️ ${stop.temperature} °C
+                ${stop.seaTemperature ? ` · 🌊 Moře ${stop.seaTemperature} °C` : ""}
+            </div>
+        `).join("");
+
+        document.getElementById("weather-card").style.display = "block";
+
+    } catch (e) {
+        console.log("Počasí nenalezeno.");
+    }
+}
+
+loadWeather();
 
     loadPageData();
   </script>
