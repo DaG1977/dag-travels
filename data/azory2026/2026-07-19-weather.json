@@ -7,7 +7,8 @@
       "place": "Plantação de Ananases A Arruda",
       "from": "11:00",
       "to": "12:00",
-      "sea": false
+      "temperature": 24,
+      "description": "Polojasno"
     },
     {
       "title": "Čajová plantáž",
@@ -15,7 +16,8 @@
       "place": "Chá Gorreana",
       "from": "13:00",
       "to": "14:00",
-      "sea": false
+      "temperature": 24,
+      "description": "Polojasno"
     },
     {
       "title": "Koupání v Capelas",
@@ -23,7 +25,9 @@
       "place": "Capelas",
       "from": "15:00",
       "to": "17:00",
-      "sea": true
+      "temperature": 23,
+      "seaTemperature": 21,
+      "description": "Jasno"
     },
     {
       "title": "Sete Cidades",
@@ -31,7 +35,8 @@
       "place": "Sete Cidades",
       "from": "17:00",
       "to": "18:00",
-      "sea": false
+      "temperature": 21,
+      "description": "Polojasno"
     }
   ]
 }
