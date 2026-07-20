@@ -1241,47 +1241,92 @@ function createWinnerSection(day) {
   if (weather.includes("bour")) return "⛈️";
   if (weather.includes("snih") || weather.includes("snez")) return "🌨️";
   if (weather.includes("prehank")) return "🌦️";
-  if (weather.includes("silny dest") || weather.includes("prudky dest")) {
+
+  if (
+    weather.includes("silny dest") ||
+    weather.includes("prudky dest")
+  ) {
     return "🌧️";
   }
+
   if (weather.includes("dest")) return "🌧️";
   if (weather.includes("mrhol")) return "🌦️";
   if (weather.includes("mlh")) return "🌫️";
   if (weather.includes("zatazen")) return "☁️";
   if (weather.includes("polojas")) return "🌤️";
   if (weather.includes("oblac")) return "⛅";
-  if (weather.includes("jasno") || weather.includes("slunec")) {
+
+  if (
+    weather.includes("jasno") ||
+    weather.includes("slunec")
+  ) {
     return "☀️";
   }
 
   return "🌤️";
-	  };
+}
 
 async function loadWeather() {
-    try {
-        const response = await fetch("data/azory2026/2026-07-20-weather.json");
-        const data = await response.json();
+  try {
+    const response = await fetch(
+      "data/azory2026/2026-07-20-weather.json"
+    );
 
-        const container = document.getElementById("weather-content");
+    if (!response.ok) {
+      throw new Error(`HTTP chyba: ${response.status}`);
+    }
 
-        container.innerHTML = data.stops.map(stop => {
-  const weatherIcon = getWeatherIcon(stop.description);
+    const data = await response.json();
 
-  return `
-    <div class="weather-item">
-      <strong>${stop.icon || "📍"} ${stop.title}</strong><br>
-      ${weatherIcon} ${stop.temperature} °C
-      ${stop.description ? ` · ${stop.description}` : ""}
-      ${
-        stop.seaTemperature != null
-          ? ` · 🌊 Moře ${stop.seaTemperature} °C`
-          : ""
-      }
-    </div>
-  `;
-}).join("");
+    const container =
+      document.getElementById("weather-content");
 
-document.getElementById("weather-card").style.display = "block";
+    const weatherCard =
+      document.getElementById("weather-card");
+
+    if (!container || !weatherCard) {
+      return;
+    }
+
+    container.innerHTML = data.stops
+      .map(stop => {
+        const weatherIcon =
+          getWeatherIcon(stop.description);
+
+        return `
+          <div class="weather-item">
+            <strong>
+              ${stop.icon || "📍"} ${stop.title}
+            </strong>
+            <br>
+
+            ${weatherIcon} ${stop.temperature} °C
+
+            ${
+              stop.description
+                ? ` · ${stop.description}`
+                : ""
+            }
+
+            ${
+              stop.seaTemperature != null
+                ? ` · 🌊 Moře ${stop.seaTemperature} °C`
+                : ""
+            }
+          </div>
+        `;
+      })
+      .join("");
+
+    weatherCard.style.display = "block";
+
+  } catch (error) {
+    console.error(
+      "Počasí se nepodařilo načíst:",
+      error
+    );
+  }
+}
 
 loadWeather();
 
