@@ -3,7 +3,7 @@
   "stops": [
     {
       "title": "Lagoa do Fogo",
-      "icon": "🍍",
+      "icon": "🏞️",
       "place": "Lagoa do Fogo",
       "from": "08:00",
       "to": "12:00",
@@ -12,7 +12,7 @@
     },
     {
       "title": "Lagoa das Furnas",
-      "icon": "🍃",
+      "icon": "🏞️",
       "place": "Lagoa das Furnas",
       "from": "12:00",
       "to": "15:00",
