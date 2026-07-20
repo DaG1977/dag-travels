@@ -1,0 +1,42 @@
+{
+  "title": "Jaké jsme měli počasí",
+  "stops": [
+    {
+      "title": "Plantáž ananasů",
+      "icon": "🍍",
+      "place": "Plantação de Ananases A Arruda",
+      "from": "11:00",
+      "to": "12:00",
+      "temperature": 24,
+      "description": "Polojasno"
+    },
+    {
+      "title": "Čajová plantáž",
+      "icon": "🍃",
+      "place": "Chá Gorreana",
+      "from": "13:00",
+      "to": "14:00",
+      "temperature": 24,
+      "description": "Polojasno"
+    },
+    {
+      "title": "Koupání v Capelas",
+      "icon": "🏖️",
+      "place": "Capelas",
+      "from": "15:00",
+      "to": "17:00",
+      "temperature": 23,
+      "seaTemperature": 21,
+      "description": "Jasno"
+    },
+    {
+      "title": "Sete Cidades",
+      "icon": "🌋",
+      "place": "Sete Cidades",
+      "from": "17:00",
+      "to": "18:00",
+      "temperature": 21,
+      "description": "Polojasno"
+    }
+  ]
+}
