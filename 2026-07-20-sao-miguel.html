@@ -1232,6 +1232,31 @@ function createWinnerSection(day) {
       }
     );
 
+	  function getWeatherIcon(description = "") {
+  const weather = description
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+
+  if (weather.includes("bour")) return "⛈️";
+  if (weather.includes("snih") || weather.includes("snez")) return "🌨️";
+  if (weather.includes("prehank")) return "🌦️";
+  if (weather.includes("silny dest") || weather.includes("prudky dest")) {
+    return "🌧️";
+  }
+  if (weather.includes("dest")) return "🌧️";
+  if (weather.includes("mrhol")) return "🌦️";
+  if (weather.includes("mlh")) return "🌫️";
+  if (weather.includes("zatazen")) return "☁️";
+  if (weather.includes("polojas")) return "🌤️";
+  if (weather.includes("oblac")) return "⛅";
+  if (weather.includes("jasno") || weather.includes("slunec")) {
+    return "☀️";
+  }
+
+  return "🌤️";
+	  };
+
 async function loadWeather() {
     try {
         const response = await fetch("data/azory2026/2026-07-20-weather.json");
@@ -1239,20 +1264,24 @@ async function loadWeather() {
 
         const container = document.getElementById("weather-content");
 
-        container.innerHTML = data.stops.map(stop => `
-            <div class="weather-item">
-                <strong>${stop.icon} ${stop.title}</strong><br>
-                🌤️ ${stop.temperature} °C
-                ${stop.seaTemperature ? ` · 🌊 Moře ${stop.seaTemperature} °C` : ""}
-            </div>
-        `).join("");
+        container.innerHTML = data.stops.map(stop => {
+  const weatherIcon = getWeatherIcon(stop.description);
 
-        document.getElementById("weather-card").style.display = "block";
+  return `
+    <div class="weather-item">
+      <strong>${stop.icon || "📍"} ${stop.title}</strong><br>
+      ${weatherIcon} ${stop.temperature} °C
+      ${stop.description ? ` · ${stop.description}` : ""}
+      ${
+        stop.seaTemperature != null
+          ? ` · 🌊 Moře ${stop.seaTemperature} °C`
+          : ""
+      }
+    </div>
+  `;
+}).join("");
 
-    } catch (e) {
-        console.log("Počasí nenalezeno.");
-    }
-}
+document.getElementById("weather-card").style.display = "block";
 
 loadWeather();
 
