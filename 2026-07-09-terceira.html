@@ -909,7 +909,9 @@ function createWinnerSection(day) {
       markerLayer.addTo(map);
     }
 
-    function createPopupContent(image) {
+    function createPopupContent(images) {
+
+    const image = images[0];
       const wrapper =
         document.createElement('div');
 
@@ -951,6 +953,29 @@ function createWinnerSection(day) {
       return wrapper;
     }
 
+function groupImagesByLocation(images, tolerance = 0.00015) {
+  const groups = [];
+
+  images.forEach(image => {
+    const group = groups.find(g =>
+      Math.abs(g.latitude - image.latitude) < tolerance &&
+      Math.abs(g.longitude - image.longitude) < tolerance
+    );
+
+    if (group) {
+      group.images.push(image);
+    } else {
+      groups.push({
+        latitude: image.latitude,
+        longitude: image.longitude,
+        images: [image]
+      });
+    }
+  });
+
+  return groups;
+}
+
     function renderMap(images) {
       const geotaggedImages = images
         .filter(
@@ -983,8 +1008,11 @@ function createWinnerSection(day) {
       }
 
       const bounds = [];
+				const groups = groupImagesByLocation(geotaggedImages);
 
-      geotaggedImages.forEach(image => {
+     groups.forEach(group => {
+
+    const image = group.images[0];
         const marker = L.marker([
           image.latitude,
           image.longitude
@@ -1001,7 +1029,7 @@ function createWinnerSection(day) {
           'popupopen',
           () => {
             marker.setPopupContent(
-              createPopupContent(image)
+              createPopupContent(group.images)
             );
           }
         );
