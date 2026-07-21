@@ -236,6 +236,13 @@
       cursor: pointer;
     }
 
+.popup-count {
+  margin: 0 0 8px;
+  font-size: 0.85rem;
+  color: #666;
+  font-weight: 600;
+}
+
     /* Galerie */
 
     .gallery {
@@ -911,47 +918,42 @@ function createWinnerSection(day) {
 
     function createPopupContent(images) {
 
-    const image = images[0];
-      const wrapper =
-        document.createElement('div');
+  const image = images[0];
 
-      const title =
-        document.createElement('p');
+  const wrapper = document.createElement('div');
 
-      title.className = 'popup-title';
-      title.textContent =
-        formatPhotoDate(image.takenAt);
+  const title = document.createElement('p');
+  title.className = 'popup-title';
+  title.textContent = formatPhotoDate(image.takenAt);
+  wrapper.appendChild(title);
 
-      const thumbnail =
-        document.createElement('img');
+  // NOVĚ – počet fotek ve skupině
+  if (images.length > 1) {
+    const count = document.createElement('p');
+    count.className = 'popup-count';
+    count.textContent = `📷 ${images.length} fotografií`;
+    wrapper.appendChild(count);
+  }
 
-      thumbnail.className = 'popup-photo';
-      thumbnail.src =
-        thumbnailUrl(image.file, 420);
-      thumbnail.alt =
-        image.alt || 'Terceira – Azory 2026';
-      thumbnail.loading = 'lazy';
+  const thumbnail = document.createElement('img');
+  thumbnail.className = 'popup-photo';
+  thumbnail.src = thumbnailUrl(image.file, 420);
+  thumbnail.alt = image.alt || 'Terceira – Azory 2026';
+  thumbnail.loading = 'lazy';
 
-      attachThumbnailFallback(
-        thumbnail,
-        image.file
-      );
+  attachThumbnailFallback(thumbnail, image.file);
 
-      thumbnail.addEventListener(
-        'click',
-        () => {
-          openLightbox(
-            originalUrl(image.file),
-            thumbnail.alt
-          );
-        }
-      );
+  thumbnail.addEventListener('click', () => {
+    openLightbox(
+      originalUrl(image.file),
+      thumbnail.alt
+    );
+  });
 
-      wrapper.appendChild(title);
-      wrapper.appendChild(thumbnail);
+  wrapper.appendChild(thumbnail);
 
-      return wrapper;
-    }
+  return wrapper;
+}
 
 function groupImagesByLocation(images, tolerance = 0.00015) {
   const groups = [];
