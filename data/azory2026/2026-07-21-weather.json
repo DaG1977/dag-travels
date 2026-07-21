@@ -2,22 +2,22 @@
   "title": "Jaké jsme měli počasí",
   "stops": [
     {
-      "title": "Lagoa do Fogo",
-      "icon": "🏞️🥾",
-      "place": "Lagoa do Fogo",
-      "from": "08:00",
-      "to": "12:00",
+      "title": "Salto do Prego",
+      "icon": "💦🥾",
+      "place": "Salto do Prego",
+      "from": "13:00",
+      "to": "16:00",
       "temperature": 23,
       "description": "Polojasno"
     },
     {
-      "title": "Lagoa das Furnas",
-      "icon": "♨️",
-      "place": "Lagoa das Furnas",
-      "from": "12:00",
+      "title": "Miradouro do Pico des Bodes",
+      "icon": "🌄,
+      "place": "Miradouro do Pico des Bodes",
+      "from": "14:00",
       "to": "15:00",
       "temperature": 20,
-      "description": "Přeháňky"
+      "description": "Polojasno"
     },
 {
       "title": "Pláž Povoaçao",
