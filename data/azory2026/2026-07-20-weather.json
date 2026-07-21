@@ -26,7 +26,7 @@
       "from": "15:00",
       "to": "18:00",
       "temperature": 22,
-      "seatemperature": 20,
+      "seaTemperature": 20,
       "description": "Polojasno"
     }
   ]
