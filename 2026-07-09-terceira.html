@@ -948,8 +948,9 @@ function createWinnerSection(day) {
 
   const counter = document.createElement("p");
   counter.className = "popup-count";
+  if (images.length > 1) {
   wrapper.appendChild(counter);
-
+}
   const photo = document.createElement("img");
   photo.className = "popup-photo";
   wrapper.appendChild(photo);
@@ -966,7 +967,9 @@ function createWinnerSection(day) {
   nav.appendChild(prev);
   nav.appendChild(next);
 
+  if (images.length > 1) {
   wrapper.appendChild(nav);
+}
 
   function refresh() {
 
@@ -975,9 +978,10 @@ function createWinnerSection(day) {
     title.textContent =
       formatPhotoDate(image.takenAt);
 
-    counter.textContent =
-      `${index + 1} / ${images.length}`;
-
+    if (images.length > 1) {
+  counter.textContent =
+    `${index + 1} / ${images.length}`;
+}
     photo.src =
       thumbnailUrl(image.file, 420);
 
