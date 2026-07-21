@@ -3,7 +3,7 @@
   "stops": [
     {
       "title": "Lagoa do Fogo",
-      "icon": "🏞️",
+      "icon": "🏞️🥾",
       "place": "Lagoa do Fogo",
       "from": "08:00",
       "to": "12:00",
@@ -12,12 +12,22 @@
     },
     {
       "title": "Lagoa das Furnas",
-      "icon": "🏞️",
+      "icon": "♨️",
       "place": "Lagoa das Furnas",
       "from": "12:00",
       "to": "15:00",
       "temperature": 20,
       "description": "Přeháňky"
+    },
+{
+      "title": "Pláž Santa Barbara",
+      "icon": "🏖️",
+      "place": "Santa Barbara",
+      "from": "15:00",
+      "to": "18:00",
+      "temperature": 22,
+      "seatemperature": 20,
+      "description": "Polojasno"
     }
   ]
     }
