@@ -243,6 +243,26 @@
   font-weight: 600;
 }
 
+.popup-nav {
+    display:flex;
+    justify-content:space-between;
+    margin-top:8px;
+}
+
+.popup-nav button {
+    border:none;
+    background:#0b7dda;
+    color:white;
+    padding:6px 12px;
+    border-radius:6px;
+    cursor:pointer;
+}
+
+.popup-nav button:disabled {
+    opacity:.35;
+    cursor:default;
+}
+
     /* Galerie */
 
     .gallery {
@@ -918,39 +938,80 @@ function createWinnerSection(day) {
 
     function createPopupContent(images) {
 
-  const image = images[0];
+  let index = 0;
 
-  const wrapper = document.createElement('div');
+  const wrapper = document.createElement("div");
 
-  const title = document.createElement('p');
-  title.className = 'popup-title';
-  title.textContent = formatPhotoDate(image.takenAt);
+  const title = document.createElement("p");
+  title.className = "popup-title";
   wrapper.appendChild(title);
 
-  // NOVĚ – počet fotek ve skupině
-  if (images.length > 1) {
-    const count = document.createElement('p');
-    count.className = 'popup-count';
-    count.textContent = `📷 ${images.length} fotografií`;
-    wrapper.appendChild(count);
+  const counter = document.createElement("p");
+  counter.className = "popup-count";
+  wrapper.appendChild(counter);
+
+  const photo = document.createElement("img");
+  photo.className = "popup-photo";
+  wrapper.appendChild(photo);
+
+  const nav = document.createElement("div");
+  nav.className = "popup-nav";
+
+  const prev = document.createElement("button");
+  prev.textContent = "◀";
+
+  const next = document.createElement("button");
+  next.textContent = "▶";
+
+  nav.appendChild(prev);
+  nav.appendChild(next);
+
+  wrapper.appendChild(nav);
+
+  function refresh() {
+
+    const image = images[index];
+
+    title.textContent =
+      formatPhotoDate(image.takenAt);
+
+    counter.textContent =
+      `${index + 1} / ${images.length}`;
+
+    photo.src =
+      thumbnailUrl(image.file, 420);
+
+    photo.alt =
+      image.alt || "";
+
+    attachThumbnailFallback(photo, image.file);
+
+    photo.onclick = () => {
+      openLightbox(
+        originalUrl(image.file),
+        photo.alt
+      );
+    };
+
+    prev.disabled = index === 0;
+    next.disabled = index === images.length - 1;
   }
 
-  const thumbnail = document.createElement('img');
-  thumbnail.className = 'popup-photo';
-  thumbnail.src = thumbnailUrl(image.file, 420);
-  thumbnail.alt = image.alt || 'Terceira – Azory 2026';
-  thumbnail.loading = 'lazy';
+  prev.onclick = () => {
+    if (index > 0) {
+      index--;
+      refresh();
+    }
+  };
 
-  attachThumbnailFallback(thumbnail, image.file);
+  next.onclick = () => {
+    if (index < images.length - 1) {
+      index++;
+      refresh();
+    }
+  };
 
-  thumbnail.addEventListener('click', () => {
-    openLightbox(
-      originalUrl(image.file),
-      thumbnail.alt
-    );
-  });
-
-  wrapper.appendChild(thumbnail);
+  refresh();
 
   return wrapper;
 }
