@@ -20,14 +20,14 @@
       "description": "Přeháňky"
     },
 {
-      "title": "Pláž Santa Barbara",
+      "title": "Pláž Povoaçao",
       "icon": "🏖️",
-      "place": "Santa Barbara",
-      "from": "15:00",
-      "to": "18:00",
-      "temperature": 22,
-      "seatemperature": 20,
-      "description": "Polojasno"
+      "place": "Povoaçao",
+      "from": "17:00",
+      "to": "18:30",
+      "temperature": 21,
+      "seaTemperature": 19,
+      "description": "Zataženo"
     }
   ]
     }
