@@ -76,6 +76,30 @@ footer{
   animation: live-pulse 1.5s infinite;
 }
 
+.new-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  padding: 6px 10px;
+
+  background: #1e88e5;
+  color: white;
+
+  border-radius: 999px;
+
+  font-size: 0.75rem;
+  font-weight: bold;
+
+  box-shadow: 0 3px 10px rgba(0,0,0,.2);
+
+  z-index: 10;
+}
+
 @keyframes live-pulse {
   0% {
     opacity: 1;
@@ -116,6 +140,10 @@ footer{
 <div class="card">
 
 <div class="card day">
+<span class="new-badge">
+  <span class="live-dot">📸</span>
+  NOVÉ
+</span>	
 	<h3><a href="2026-07-08-prague-lisboa-terceira.html">8. 7. 2026 – Praha -> Lisabon -> Terceira</a></h3>
   <p>Letíme na Azory!</p>
 </div>
