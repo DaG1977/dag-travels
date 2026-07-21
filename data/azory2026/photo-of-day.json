@@ -112,5 +112,30 @@
 									"20260719_171006.JPG",
 						"PXL_20260719_170842604.jpg"
 								]
+  },
+
+{
+  "date": "2026-07-20",
+  "title": "Sao Miguel",
+  "island": "2026-07-20-sao-miguel",
+  "nominations": [
+      {
+        "person": "Dal",
+        "photo": "20260720_104247.JPG",
+        "comment": ""
+      },
+      {
+        "person": "Iva",
+        "photo": "IMG_7531.jpeg",
+        "comment": ""
+      },
+      {
+        "person": "Šíma",
+        "photo": "PXL_20260729_075052562.jpg",
+        "comment": ""
+      }
+    ],
+    "winner": ["20260720_104247.JPG"]
   }
+
 ]
