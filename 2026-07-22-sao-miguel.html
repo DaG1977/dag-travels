@@ -1,0 +1,1336 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Sao Miguel | Azory 2026</title>
+
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  >
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      color: #263238;
+      background: #f2f7f5;
+    }
+
+    header {
+      padding: 48px 20px;
+      color: white;
+      text-align: center;
+      background: linear-gradient(135deg, #087f6d, #42a58f);
+    }
+
+    header h1 {
+      margin: 0 0 8px;
+      font-size: clamp(2.5rem, 7vw, 4.2rem);
+    }
+
+    header p {
+      margin: 0;
+      font-size: 1.1rem;
+    }
+
+    main {
+      width: min(1400px, calc(100% - 28px));
+      margin: 24px auto;
+    }
+
+    .card {
+      margin-bottom: 22px;
+      padding: 22px;
+      background: white;
+      border-radius: 18px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    }
+
+    .card h2 {
+      margin-top: 0;
+    }
+
+    .status {
+      padding: 24px 10px;
+      color: #607d8b;
+      text-align: center;
+    }
+
+    .error-box {
+      padding: 12px 14px;
+      color: #8a1c1c;
+      border-radius: 12px;
+      background: #fff0f0;
+    }
+
+    /* Fotka dne */
+
+    .photo-day-block {
+      margin-bottom: 35px;
+    }
+
+    .photo-day-block:last-child {
+      margin-bottom: 0;
+    }
+
+    .photo-day-heading {
+      margin: 0 0 5px;
+    }
+
+    .photo-day-date {
+      margin-bottom: 16px;
+      color: #607d8b;
+      font-weight: bold;
+    }
+
+    .nominations {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 14px;
+    }
+
+    .nomination {
+      position: relative;
+      overflow: hidden;
+      border-radius: 15px;
+      background: #eef5f2;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.07);
+    }
+
+    .nomination.is-winner {
+      outline: 3px solid #e0aa20;
+      background: #fff9e8;
+    }
+
+    .nomination-image-button,
+    .winner-image-button {
+      display: block;
+      width: 100%;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      cursor: pointer;
+    }
+
+    .nomination img {
+      display: block;
+      width: 100%;
+      height: 230px;
+      object-fit: cover;
+    }
+
+    .nomination-info {
+      padding: 11px 13px 13px;
+    }
+
+    .nomination-person {
+      font-weight: bold;
+    }
+
+    .nomination-comment {
+      margin: 6px 0 0;
+      color: #607d8b;
+      font-size: 0.92rem;
+    }
+
+    .winner-badge {
+      position: absolute;
+      top: 9px;
+      right: 9px;
+      padding: 6px 10px;
+      color: #493400;
+      border-radius: 14px;
+      background: #ffd75e;
+      font-size: 0.82rem;
+      font-weight: bold;
+      box-shadow: 0 2px 7px rgba(0, 0, 0, 0.2);
+    }
+
+ .winner-section {
+  margin-top: 22px;
+  padding: 16px;
+  border: 2px solid #e0aa20;
+  border-radius: 17px;
+  background: #fffbea;
+}
+
+.winner-title {
+  margin: 0 0 12px;
+  font-size: 1.15rem;
+  font-weight: bold;
+}
+
+.winner-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+}
+
+.winner-gallery.single {
+  display: block;
+}
+
+.winner-image-button {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.winner-gallery img {
+  display: block;
+  width: 100%;
+  border-radius: 13px;
+  background: #eee8d7;
+}
+
+.winner-gallery.single img {
+  max-height: 600px;
+  object-fit: contain;
+}
+
+.winner-gallery:not(.single) img {
+  height: 320px;
+  object-fit: cover;
+}
+    /* Mapa */
+
+    #map {
+      width: 100%;
+      height: 500px;
+      overflow: hidden;
+      border-radius: 14px;
+      background: #dce9e5;
+    }
+
+    .map-note {
+      margin-bottom: 0;
+      color: #607d8b;
+      font-size: 0.92rem;
+    }
+
+    .leaflet-control-layers {
+      border-radius: 10px;
+    }
+
+    .popup-title {
+      margin: 0 0 8px;
+      font-weight: bold;
+    }
+
+    .popup-photo {
+      display: block;
+      width: 210px;
+      max-height: 170px;
+      object-fit: cover;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    /* Galerie */
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 12px;
+    }
+
+    .gallery-button {
+      position: relative;
+      display: block;
+      padding: 0;
+      overflow: hidden;
+      border: 0;
+      border-radius: 14px;
+      background: #dce9e5;
+      cursor: pointer;
+    }
+
+    .gallery-button img {
+      display: block;
+      width: 100%;
+      height: 250px;
+      object-fit: cover;
+      transition: transform 0.2s ease;
+    }
+
+    .gallery-button:hover img {
+      transform: scale(1.025);
+    }
+
+    .gps-badge,
+    .award-badge {
+      position: absolute;
+      padding: 5px 8px;
+      border-radius: 12px;
+      font-size: 0.78rem;
+    }
+
+    .gps-badge {
+      right: 8px;
+      bottom: 8px;
+      color: white;
+      background: rgba(0, 0, 0, 0.68);
+    }
+
+    .award-badge {
+      left: 8px;
+      top: 8px;
+      color: #493400;
+      background: #ffd75e;
+      font-weight: bold;
+    }
+
+    /* Lightbox */
+
+    .lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.94);
+    }
+
+    .lightbox.active {
+      display: flex;
+    }
+
+    .lightbox img {
+      max-width: 95vw;
+      max-height: 90vh;
+      object-fit: contain;
+    }
+
+    .close {
+      position: fixed;
+      top: 10px;
+      right: 17px;
+      z-index: 10000;
+      padding: 8px 14px;
+      border: 0;
+      color: white;
+      background: transparent;
+      font-size: 2.3rem;
+      cursor: pointer;
+    }
+
+    .back {
+      color: #087f6d;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    @media (max-width: 650px) {
+      .card {
+        padding: 15px;
+      }
+
+      #map {
+        height: 400px;
+      }
+
+      .nominations {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 7px;
+      }
+
+      .nomination img {
+        height: 145px;
+      }
+
+      .nomination-info {
+        padding: 8px;
+        font-size: 0.9rem;
+      }
+
+      .nomination-comment {
+        display: none;
+      }
+
+      .winner-badge {
+        padding: 4px 7px;
+        font-size: 0.7rem;
+      }
+
+      .gallery {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .gallery-button img {
+        height: 170px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>Sao Miguel</h1>
+<p>22. července 2026 · poslední zastávka</p>
+  </header>
+
+  <main>
+    <section class="card">
+      <h2>Ostrov Sao Miguel</h2>
+	<p>Největší z azorských ostrovů.</p>
+      <p>Zápisek budeme postupně doplňovat.</p>
+    </section>
+
+<section id="weather-card" class="card" style="display:none;">
+  <h2>🌤️ Jaké jsme měli počasí</h2>
+  <div id="weather-content"></div>
+</section>
+
+    <section class="card">
+      <h2>🏆 Fotka dne</h2>
+      <div id="photo-of-day">
+        <p class="status">Načítám nominace…</p>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>
+        Mapa fotografií
+        <span id="gps-count"></span>
+      </h2>
+
+      <div id="map"></div>
+
+      <p class="map-note">
+        Na mapě jsou fotografie s GPS polohou. Mapový podklad
+        lze přepnout na satelitní snímek.
+      </p>
+    </section>
+
+    <section class="card">
+      <h2>
+        Fotogalerie
+        <span id="photo-count"></span>
+      </h2>
+
+      <div id="gallery" class="gallery">
+        <p class="status">Načítám fotografie…</p>
+      </div>
+    </section>
+
+    <section class="card">
+      <a class="back" href="azory-2026.html">
+        ← Zpět na Azory 2026
+      </a>
+    </section>
+  </main>
+
+  <div
+    id="lightbox"
+    class="lightbox"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Zvětšená fotografie"
+  >
+    <button
+      id="close-lightbox"
+      class="close"
+      type="button"
+      aria-label="Zavřít fotografii"
+    >
+      ×
+    </button>
+
+    <img id="lightbox-image" alt="">
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <script>
+    const islandSlug = '2026-07-22-sao-miguel';
+
+const photoDirectory =
+  'https://photos.d-a-g.name/azory2026/2026-07-22-sao-miguel/';
+
+    const galleryEndpoint =
+      photoDirectory + 'gallery.php';
+
+    const thumbnailEndpoint =
+      photoDirectory + 'thumb.php';
+
+    const photoOfDayEndpoint =
+      '/data/azory2026/photo-of-day.json';
+
+    const gallery =
+      document.getElementById('gallery');
+
+    const photoCount =
+      document.getElementById('photo-count');
+
+    const gpsCount =
+      document.getElementById('gps-count');
+
+    const photoOfDayContainer =
+      document.getElementById('photo-of-day');
+
+    const lightbox =
+      document.getElementById('lightbox');
+
+    const lightboxImage =
+      document.getElementById('lightbox-image');
+
+    const closeLightboxButton =
+      document.getElementById('close-lightbox');
+
+    function originalUrl(fileName) {
+      return photoDirectory + encodeURIComponent(fileName);
+    }
+
+    function thumbnailUrl(fileName, width = 600) {
+      return (
+        thumbnailEndpoint +
+        '?file=' +
+        encodeURIComponent(fileName) +
+        '&w=' +
+        width
+      );
+    }
+
+    function attachThumbnailFallback(image, fileName) {
+      image.addEventListener(
+        'error',
+        () => {
+          if (image.dataset.fallbackUsed === 'true') {
+            return;
+          }
+
+          image.dataset.fallbackUsed = 'true';
+          image.src = originalUrl(fileName);
+        },
+        { once: true }
+      );
+    }
+
+    function openLightbox(url, altText) {
+      lightboxImage.src = url;
+      lightboxImage.alt = altText || '';
+      lightbox.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox() {
+      lightbox.classList.remove('active');
+      lightboxImage.src = '';
+      document.body.style.overflow = '';
+    }
+
+    function formatPhotoDate(value) {
+      if (!value) {
+        return 'Fotografie ze Sao Miguel';
+      }
+
+      const normalized = value.replace(' ', 'T');
+      const date = new Date(normalized);
+
+      if (Number.isNaN(date.getTime())) {
+        return value;
+      }
+
+      return new Intl.DateTimeFormat(
+        'cs-CZ',
+        {
+          dateStyle: 'medium',
+          timeStyle: 'short'
+        }
+      ).format(date);
+    }
+
+    function formatDayDate(value) {
+      const date = new Date(value + 'T12:00:00');
+
+      if (Number.isNaN(date.getTime())) {
+        return value;
+      }
+
+      return new Intl.DateTimeFormat(
+        'cs-CZ',
+        {
+          weekday: 'long',
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric'
+        }
+      ).format(date);
+    }
+
+    function normalizePhotoOfDayData(data) {
+      if (Array.isArray(data)) {
+        return data;
+      }
+
+      if (data && typeof data === 'object') {
+        return [data];
+      }
+
+      return [];
+    }
+
+    function createNominationCard(day, nomination) {
+      const card = document.createElement('article');
+      card.className = 'nomination';
+
+      const winners = Array.isArray(day.winner)
+  ? day.winner
+  : [day.winner];
+
+const isWinner =
+  winners.includes(nomination.photo);
+
+      if (isWinner) {
+        card.classList.add('is-winner');
+      }
+
+      const imageButton =
+        document.createElement('button');
+
+      imageButton.type = 'button';
+      imageButton.className =
+        'nomination-image-button';
+
+      const image = document.createElement('img');
+      image.src = thumbnailUrl(nomination.photo, 700);
+      image.alt =
+        `Nominace ${nomination.person} – ${day.title || 'Fotka dne'}`;
+      image.loading = 'lazy';
+      image.decoding = 'async';
+
+      attachThumbnailFallback(
+        image,
+        nomination.photo
+      );
+
+      imageButton.addEventListener(
+        'click',
+        () => {
+          openLightbox(
+            originalUrl(nomination.photo),
+            image.alt
+          );
+        }
+      );
+
+      imageButton.appendChild(image);
+
+      const info = document.createElement('div');
+      info.className = 'nomination-info';
+
+      const person = document.createElement('div');
+      person.className = 'nomination-person';
+      person.textContent = `⭐ ${nomination.person}`;
+
+      info.appendChild(person);
+
+      if (nomination.comment) {
+        const comment = document.createElement('p');
+        comment.className = 'nomination-comment';
+        comment.textContent = nomination.comment;
+        info.appendChild(comment);
+      }
+
+      card.appendChild(imageButton);
+      card.appendChild(info);
+
+      if (isWinner) {
+        const badge = document.createElement('span');
+        badge.className = 'winner-badge';
+        badge.textContent = '👑 Vítěz';
+        card.appendChild(badge);
+      }
+
+      return card;
+    }
+
+function createWinnerSection(day) {
+  if (!day.winner) {
+    return null;
+  }
+
+  const winners = Array.isArray(day.winner)
+    ? day.winner
+    : [day.winner];
+
+  const nominationList = Array.isArray(day.nominations)
+    ? day.nominations
+    : [];
+
+  const winnerNames = nominationList
+    .filter(nomination => winners.includes(nomination.photo))
+    .map(nomination => nomination.person);
+
+  const block = document.createElement('div');
+  block.className = 'winner-section';
+
+  const title = document.createElement('p');
+  title.className = 'winner-title';
+  title.textContent =
+    winnerNames.length > 0
+      ? `👑 ${winners.length === 1 ? 'Vítěz dne' : 'Vítězové dne'} – ${winnerNames.join(', ')}`
+      : `👑 ${winners.length === 1 ? 'Vítěz dne' : 'Vítězové dne'}`;
+
+  block.appendChild(title);
+
+  const gallery = document.createElement('div');
+  gallery.className =
+    winners.length === 1
+      ? 'winner-gallery single'
+      : 'winner-gallery';
+
+  block.appendChild(gallery);
+
+  winners.forEach(file => {
+    const imageButton = document.createElement('button');
+    imageButton.type = 'button';
+    imageButton.className = 'winner-image-button';
+
+    const image = document.createElement('img');
+    image.src = thumbnailUrl(file, 1200);
+    image.alt =
+      `Vítězná fotografie – ${day.title || 'Fotka dne'}`;
+    image.loading = 'lazy';
+    image.decoding = 'async';
+
+    attachThumbnailFallback(image, file);
+
+    imageButton.addEventListener('click', () => {
+      openLightbox(
+        originalUrl(file),
+        image.alt
+      );
+    });
+
+    imageButton.appendChild(image);
+    gallery.appendChild(imageButton);
+  });
+
+  return block;
+}
+    function renderPhotoOfDay(rawDays) {
+      const days =
+        normalizePhotoOfDayData(rawDays);
+
+      const islandDays = days.filter(
+        day => day.island === islandSlug
+      );
+
+      if (islandDays.length === 0) {
+        photoOfDayContainer.innerHTML =
+          '<p class="status">' +
+          'Pro Sao Miguel zatím nejsou vybrané nominace.' +
+          '</p>';
+        return;
+      }
+
+      photoOfDayContainer.innerHTML = '';
+
+      islandDays
+        .sort(
+          (a, b) =>
+            String(a.date).localeCompare(
+              String(b.date)
+            )
+        )
+        .forEach(day => {
+          const block =
+            document.createElement('div');
+
+          block.className =
+            'photo-day-block';
+
+          const heading =
+            document.createElement('h3');
+
+          heading.className =
+            'photo-day-heading';
+
+          heading.textContent =
+            day.title || 'Fotka dne';
+
+          const date =
+            document.createElement('div');
+
+          date.className =
+            'photo-day-date';
+
+          date.textContent =
+            formatDayDate(day.date);
+
+          const nominations =
+            document.createElement('div');
+
+          nominations.className =
+            'nominations';
+
+          const nominationList =
+            Array.isArray(day.nominations)
+              ? day.nominations
+              : [];
+
+          nominationList.forEach(
+            nomination => {
+              if (
+                !nomination.person ||
+                !nomination.photo
+              ) {
+                return;
+              }
+
+              nominations.appendChild(
+                createNominationCard(
+                  day,
+                  nomination
+                )
+              );
+            }
+          );
+
+          block.appendChild(heading);
+          block.appendChild(date);
+
+          if (nominationList.length > 0) {
+            block.appendChild(nominations);
+          }
+
+          const winner =
+            createWinnerSection(day);
+
+          if (winner) {
+            block.appendChild(winner);
+          }
+
+          photoOfDayContainer.appendChild(
+            block
+          );
+        });
+    }
+
+    function createAwardsIndex(days) {
+      const nominations = new Set();
+      const winners = new Set();
+
+      normalizePhotoOfDayData(days)
+        .filter(
+          day => day.island === islandSlug
+        )
+        .forEach(day => {
+          if (Array.isArray(day.nominations)) {
+            day.nominations.forEach(
+              nomination => {
+                if (nomination.photo) {
+                  nominations.add(
+                    nomination.photo
+                  );
+                }
+              }
+            );
+          }
+
+      if (day.winner) {
+  const dayWinners = Array.isArray(day.winner)
+    ? day.winner
+    : [day.winner];
+
+  dayWinners.forEach(photo => winners.add(photo));
+}
+        });
+
+      return {
+        nominations,
+        winners
+      };
+    }
+
+    let map = null;
+    let markerLayer = null;
+
+    function initializeMap() {
+      if (
+        typeof L === 'undefined'
+      ) {
+        throw new Error(
+          'Knihovna Leaflet se nenačetla.'
+        );
+      }
+
+      map = L.map('map').setView(
+  [37.78, -25.50],
+  10
+);
+
+      const positron = L.tileLayer(
+        'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+        {
+          maxZoom: 20,
+          attribution:
+            '&copy; OpenStreetMap přispěvatelé &copy; CARTO'
+        }
+      );
+
+      const satellite = L.tileLayer(
+        'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+        {
+          maxZoom: 19,
+          attribution:
+            'Tiles &copy; Esri'
+        }
+      );
+
+      positron.addTo(map);
+
+      L.control.layers(
+        {
+          '🗺 Mapa': positron,
+          '🛰 Satelit': satellite
+        },
+        {},
+        {
+          collapsed: false
+        }
+      ).addTo(map);
+
+      markerLayer = L.layerGroup();
+      markerLayer.addTo(map);
+    }
+
+    function createPopupContent(image) {
+      const wrapper =
+        document.createElement('div');
+
+      const title =
+        document.createElement('p');
+
+      title.className = 'popup-title';
+      title.textContent =
+        formatPhotoDate(image.takenAt);
+
+      const thumbnail =
+        document.createElement('img');
+
+      thumbnail.className = 'popup-photo';
+      thumbnail.src =
+        thumbnailUrl(image.file, 420);
+      thumbnail.alt =
+        image.alt || 'Flores – Azory 2026';
+      thumbnail.loading = 'lazy';
+
+      attachThumbnailFallback(
+        thumbnail,
+        image.file
+      );
+
+      thumbnail.addEventListener(
+        'click',
+        () => {
+          openLightbox(
+            originalUrl(image.file),
+            thumbnail.alt
+          );
+        }
+      );
+
+      wrapper.appendChild(title);
+      wrapper.appendChild(thumbnail);
+
+      return wrapper;
+    }
+
+    function renderMap(images) {
+      const geotaggedImages = images
+        .filter(
+          image =>
+            image.hasGps === true &&
+            Number.isFinite(
+              Number(image.latitude)
+            ) &&
+            Number.isFinite(
+              Number(image.longitude)
+            )
+        )
+        .map(
+          image => ({
+            ...image,
+            latitude: Number(image.latitude),
+            longitude: Number(image.longitude)
+          })
+        );
+
+      gpsCount.textContent =
+        `(${geotaggedImages.length} z ${images.length} fotografií)`;
+
+      if (
+        geotaggedImages.length === 0 ||
+        !map ||
+        !markerLayer
+      ) {
+        return;
+      }
+
+      const bounds = [];
+
+      geotaggedImages.forEach(image => {
+        const marker = L.marker([
+          image.latitude,
+          image.longitude
+        ]);
+
+        marker.bindPopup(
+          '<p>Načítám náhled…</p>',
+          {
+            maxWidth: 250
+          }
+        );
+
+        marker.on(
+          'popupopen',
+          () => {
+            marker.setPopupContent(
+              createPopupContent(image)
+            );
+          }
+        );
+
+        marker.bindTooltip(
+          formatPhotoDate(image.takenAt),
+          {
+            direction: 'top'
+          }
+        );
+
+        markerLayer.addLayer(marker);
+
+        bounds.push([
+          image.latitude,
+          image.longitude
+        ]);
+      });
+
+      map.fitBounds(bounds, {
+        padding: [30, 30],
+        maxZoom: 14
+      });
+    }
+
+    function renderGallery(
+      images,
+      awards = {
+        nominations: new Set(),
+        winners: new Set()
+      }
+    ) {
+      photoCount.textContent =
+        `(${images.length})`;
+
+      gallery.innerHTML = '';
+
+      images.forEach(image => {
+        const original =
+          originalUrl(image.file);
+
+        const alt =
+          image.alt ||
+          'Sao Miguel – Azory 2026';
+
+        const button =
+          document.createElement('button');
+
+        button.type = 'button';
+        button.className =
+          'gallery-button';
+
+        const img =
+          document.createElement('img');
+
+        img.src =
+          thumbnailUrl(image.file, 650);
+        img.alt = alt;
+        img.loading = 'lazy';
+        img.decoding = 'async';
+
+        attachThumbnailFallback(
+          img,
+          image.file
+        );
+
+        button.appendChild(img);
+
+        if (image.hasGps === true) {
+          const badge =
+            document.createElement('span');
+
+          badge.className = 'gps-badge';
+          badge.textContent = '📍 mapa';
+          button.appendChild(badge);
+        }
+
+        if (
+          awards.winners.has(image.file)
+        ) {
+          const award =
+            document.createElement('span');
+
+          award.className = 'award-badge';
+          award.textContent = '👑 Vítěz';
+          button.appendChild(award);
+        } else if (
+          awards.nominations.has(image.file)
+        ) {
+          const award =
+            document.createElement('span');
+
+          award.className = 'award-badge';
+          award.textContent = '⭐ Nominace';
+          button.appendChild(award);
+        }
+
+        button.addEventListener(
+          'click',
+          () => {
+            openLightbox(
+              original,
+              alt
+            );
+          }
+        );
+
+        gallery.appendChild(button);
+      });
+    }
+
+    async function fetchJson(url, label) {
+      const response = await fetch(
+        url,
+        {
+          cache: 'no-store'
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(
+          `${label}: HTTP ${response.status}`
+        );
+      }
+
+      return response.json();
+    }
+
+    async function loadPageData() {
+      let galleryData = null;
+      let photoOfDayData = [];
+
+      try {
+        galleryData = await fetchJson(
+          galleryEndpoint,
+          'Galerie'
+        );
+
+        if (!Array.isArray(galleryData.images)) {
+          throw new Error(
+            'Galerie má neplatný formát.'
+          );
+        }
+      } catch (error) {
+        console.error(error);
+
+        gallery.innerHTML =
+          '<p class="error-box">' +
+          'Fotografie se nepodařilo načíst.' +
+          '</p>';
+
+        gpsCount.textContent =
+          '(mapu nelze načíst)';
+
+        return;
+      }
+
+      try {
+        photoOfDayData = await fetchJson(
+          photoOfDayEndpoint,
+          'Fotka dne'
+        );
+
+        renderPhotoOfDay(
+          photoOfDayData
+        );
+      } catch (error) {
+        console.error(error);
+
+        photoOfDayContainer.innerHTML =
+          '<p class="error-box">' +
+          'Nominace se nepodařilo načíst.' +
+          '</p>';
+      }
+
+      const awards =
+        createAwardsIndex(
+          photoOfDayData
+        );
+
+      renderGallery(
+        galleryData.images,
+        awards
+      );
+
+      try {
+        initializeMap();
+        renderMap(galleryData.images);
+      } catch (error) {
+        console.error(error);
+
+        gpsCount.textContent =
+          '(mapu se nepodařilo spustit)';
+
+        const mapElement =
+          document.getElementById('map');
+
+        mapElement.innerHTML =
+          '<p class="error-box">' +
+          'Mapu se nepodařilo načíst.' +
+          '</p>';
+      }
+    }
+
+    closeLightboxButton.addEventListener(
+      'click',
+      closeLightbox
+    );
+
+    lightbox.addEventListener(
+      'click',
+      event => {
+        if (
+          event.target === lightbox ||
+          event.target === lightboxImage
+        ) {
+          closeLightbox();
+        }
+      }
+    );
+
+    document.addEventListener(
+      'keydown',
+      event => {
+        if (event.key === 'Escape') {
+          closeLightbox();
+        }
+      }
+    );
+
+	  function getWeatherIcon(description = "") {
+  const weather = description
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+
+  if (weather.includes("bour")) return "⛈️";
+  if (weather.includes("snih") || weather.includes("snez")) return "🌨️";
+  if (weather.includes("prehank")) return "🌦️";
+
+  if (
+    weather.includes("silny dest") ||
+    weather.includes("prudky dest")
+  ) {
+    return "🌧️";
+  }
+
+  if (weather.includes("dest")) return "🌧️";
+  if (weather.includes("mrhol")) return "🌦️";
+  if (weather.includes("mlh")) return "🌫️";
+  if (weather.includes("zatazen")) return "☁️";
+  if (weather.includes("polojas")) return "🌤️";
+  if (weather.includes("oblac")) return "⛅";
+
+  if (
+    weather.includes("jasno") ||
+    weather.includes("slunec")
+  ) {
+    return "☀️";
+  }
+
+  return "🌤️";
+}
+
+async function loadWeather() {
+  try {
+    const response = await fetch(
+      "data/azory2026/2026-07-22-weather.json"
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP chyba: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    const container =
+      document.getElementById("weather-content");
+
+    const weatherCard =
+      document.getElementById("weather-card");
+
+    if (!container || !weatherCard) {
+      return;
+    }
+
+    container.innerHTML = data.stops
+      .map(stop => {
+        const weatherIcon =
+          getWeatherIcon(stop.description);
+
+        return `
+          <div class="weather-item">
+            <strong>
+              ${stop.icon || "📍"} ${stop.title}
+            </strong>
+            <br>
+
+            ${weatherIcon} ${stop.temperature} °C
+
+            ${
+              stop.description
+                ? ` · ${stop.description}`
+                : ""
+            }
+
+            ${
+              stop.seaTemperature != null
+                ? ` · 🌊 Moře ${stop.seaTemperature} °C`
+                : ""
+            }
+          </div>
+        `;
+      })
+      .join("");
+
+    weatherCard.style.display = "block";
+
+  } catch (error) {
+    console.error(
+      "Počasí se nepodařilo načíst:",
+      error
+    );
+  }
+}
+
+loadWeather();
+
+    loadPageData();
+  </script>
+</body>
+</html>
