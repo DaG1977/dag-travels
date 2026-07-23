@@ -824,24 +824,28 @@ const photoDirectory =
     let markerLayer = null;
 
     const travelRoute = {
-            from: [37.741, -25.698]    // letiště Ponta Delgada
-										to: [38.7742, -9.1342]   // Lisboa
-    };
+  from: [37.741, -25.698],
+  to: [38.7742, -9.1342]
+};
 
-    function initializeMap() {
-      if (
-        typeof L === 'undefined'
-      ) {
-        throw new Error(
-          'Knihovna Leaflet se nenačetla.'
-        );
-      }
+function initializeMap() {
+  if (typeof L === 'undefined') {
+    throw new Error(
+      'Knihovna Leaflet se nenačetla.'
+    );
+  }
 
-      map = L.map('map').setView(
-        [38.25, -17,4],
-        6
-      );
+  map = L.map('map');
 
+  const routeBounds = [
+    travelRoute.from,
+    travelRoute.to
+  ];
+
+  map.fitBounds(routeBounds, {
+    padding: [40, 40]
+  });
+}
       const positron = L.tileLayer(
         'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
         {
