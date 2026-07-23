@@ -845,37 +845,42 @@ function initializeMap() {
   map.fitBounds(routeBounds, {
     padding: [40, 40]
   });
-}
-      const positron = L.tileLayer(
-        'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
-        {
-          maxZoom: 20,
-          attribution:
-            '&copy; OpenStreetMap přispěvatelé &copy; CARTO'
-        }
-      );
 
-      const satellite = L.tileLayer(
-        'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-        {
-          maxZoom: 19,
-          attribution:
-            'Tiles &copy; Esri'
-        }
-      );
+  const positron = L.tileLayer(
+    'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+    {
+      maxZoom: 20,
+      attribution:
+        '&copy; OpenStreetMap přispěvatelé &copy; CARTO'
+    }
+  );
 
-      positron.addTo(map);
+  const satellite = L.tileLayer(
+    'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+    {
+      maxZoom: 19,
+      attribution: 'Tiles &copy; Esri'
+    }
+  );
 
-      L.control.layers(
-        {
-          '🗺 Mapa': positron,
-          '🛰 Satelit': satellite
-        },
-        {},
-        {
-          collapsed: false
-        }
-      ).addTo(map);
+  positron.addTo(map);
+
+  L.control.layers(
+    {
+      '🗺 Mapa': positron,
+      '🛰 Satelit': satellite
+    },
+    {},
+    {
+      collapsed: false
+    }
+  ).addTo(map);
+
+  markerLayer = L.layerGroup();
+  markerLayer.addTo(map);
+
+  // ... zbytek kódu (planeIcon, polyline, marker ...)
+} // <-- AŽ TADY má initializeMap() končit
 
       markerLayer = L.layerGroup();
       markerLayer.addTo(map);
