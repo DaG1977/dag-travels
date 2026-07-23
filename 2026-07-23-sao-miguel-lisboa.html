@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Sao Miguel -> Lisabon | Azory 2026</title>
+  <title>São Miguel → Lisabon | Azory 2026</title>
 
   <link
     rel="stylesheet"
@@ -357,14 +357,14 @@
 
 <body>
   <header>
-    <h1>Sao Miguel -> Lisabon</h1>
-<p>23. července 2026 · Sao Miguel a přesun do Lisabonu</p>
+    <h1>São Miguel → Lisabon</h1>
+<p>23. července 2026 · São Miguel a přesun do Lisabonu</p>
   </header>
 
   <main>
     <section class="card">
-      <h2>Sao Miguel a přesun do Lisabonu</h2>
-	<p>Poslední den na ostrově Sao Miguel a přesun do Lisabonu</p>
+      <h2>São Miguel a přesun do Lisabonu</h2>
+	<p>Poslední den na ostrově São Miguel a přesun do Lisabonu</p>
       <p>Zápisek budeme postupně doplňovat.</p>
     </section>
 
@@ -426,43 +426,33 @@
     <img id="lightbox-image" alt="">
   </div>
 
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
   <script>
     const islandSlug = '2026-07-23-sao-miguel-lisboa';
 
-const photoDirectory =
-  'https://photos.d-a-g.name/azory2026/2026-07-18-sao-miguel-lisboa/';
+    const photoDirectory =
+      'https://photos.d-a-g.name/azory2026/2026-07-23-sao-miguel-lisboa/';
 
-    const galleryEndpoint =
-      photoDirectory + 'gallery.php';
+    const galleryEndpoint = photoDirectory + 'gallery.php';
+    const thumbnailEndpoint = photoDirectory + 'thumb.php';
+    const photoOfDayEndpoint = '/data/azory2026/photo-of-day.json';
 
-    const thumbnailEndpoint =
-      photoDirectory + 'thumb.php';
+    const gallery = document.getElementById('gallery');
+    const photoCount = document.getElementById('photo-count');
+    const gpsCount = document.getElementById('gps-count');
+    const photoOfDayContainer = document.getElementById('photo-of-day');
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImage = document.getElementById('lightbox-image');
+    const closeLightboxButton = document.getElementById('close-lightbox');
 
-    const photoOfDayEndpoint =
-      '/data/azory2026/photo-of-day.json';
+    let map = null;
+    let markerLayer = null;
 
-    const gallery =
-      document.getElementById('gallery');
-
-    const photoCount =
-      document.getElementById('photo-count');
-
-    const gpsCount =
-      document.getElementById('gps-count');
-
-    const photoOfDayContainer =
-      document.getElementById('photo-of-day');
-
-    const lightbox =
-      document.getElementById('lightbox');
-
-    const lightboxImage =
-      document.getElementById('lightbox-image');
-
-    const closeLightboxButton =
-      document.getElementById('close-lightbox');
+    const travelRoute = {
+      from: [37.741, -25.698],
+      to: [38.7742, -9.1342]
+    };
 
     function originalUrl(fileName) {
       return photoDirectory + encodeURIComponent(fileName);
@@ -493,9 +483,9 @@ const photoDirectory =
       );
     }
 
-    function openLightbox(url, altText) {
+    function openLightbox(url, altText = '') {
       lightboxImage.src = url;
-      lightboxImage.alt = altText || '';
+      lightboxImage.alt = altText;
       lightbox.classList.add('active');
       document.body.style.overflow = 'hidden';
     }
@@ -503,46 +493,41 @@ const photoDirectory =
     function closeLightbox() {
       lightbox.classList.remove('active');
       lightboxImage.src = '';
+      lightboxImage.alt = '';
       document.body.style.overflow = '';
     }
 
     function formatPhotoDate(value) {
       if (!value) {
-        return 'Fotografie z Flores';
+        return 'Fotografie ze São Miguelu';
       }
 
-      const normalized = value.replace(' ', 'T');
+      const normalized = String(value).replace(' ', 'T');
       const date = new Date(normalized);
 
       if (Number.isNaN(date.getTime())) {
-        return value;
+        return String(value);
       }
 
-      return new Intl.DateTimeFormat(
-        'cs-CZ',
-        {
-          dateStyle: 'medium',
-          timeStyle: 'short'
-        }
-      ).format(date);
+      return new Intl.DateTimeFormat('cs-CZ', {
+        dateStyle: 'medium',
+        timeStyle: 'short'
+      }).format(date);
     }
 
     function formatDayDate(value) {
-      const date = new Date(value + 'T12:00:00');
+      const date = new Date(String(value) + 'T12:00:00');
 
       if (Number.isNaN(date.getTime())) {
-        return value;
+        return String(value || '');
       }
 
-      return new Intl.DateTimeFormat(
-        'cs-CZ',
-        {
-          weekday: 'long',
-          day: 'numeric',
-          month: 'long',
-          year: 'numeric'
-        }
-      ).format(date);
+      return new Intl.DateTimeFormat('cs-CZ', {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+      }).format(date);
     }
 
     function normalizePhotoOfDayData(data) {
@@ -557,23 +542,30 @@ const photoDirectory =
       return [];
     }
 
+    function getWinnerFiles(day) {
+      if (!day || !day.winner) {
+        return [];
+      }
+
+      return Array.isArray(day.winner)
+        ? day.winner.filter(Boolean)
+        : [day.winner];
+    }
+
     function createNominationCard(day, nomination) {
       const card = document.createElement('article');
       card.className = 'nomination';
 
-      const isWinner =
-        nomination.photo === day.winner;
+      const winners = getWinnerFiles(day);
+      const isWinner = winners.includes(nomination.photo);
 
       if (isWinner) {
         card.classList.add('is-winner');
       }
 
-      const imageButton =
-        document.createElement('button');
-
+      const imageButton = document.createElement('button');
       imageButton.type = 'button';
-      imageButton.className =
-        'nomination-image-button';
+      imageButton.className = 'nomination-image-button';
 
       const image = document.createElement('img');
       image.src = thumbnailUrl(nomination.photo, 700);
@@ -582,20 +574,11 @@ const photoDirectory =
       image.loading = 'lazy';
       image.decoding = 'async';
 
-      attachThumbnailFallback(
-        image,
-        nomination.photo
-      );
+      attachThumbnailFallback(image, nomination.photo);
 
-      imageButton.addEventListener(
-        'click',
-        () => {
-          openLightbox(
-            originalUrl(nomination.photo),
-            image.alt
-          );
-        }
-      );
+      imageButton.addEventListener('click', () => {
+        openLightbox(originalUrl(nomination.photo), image.alt);
+      });
 
       imageButton.appendChild(image);
 
@@ -605,7 +588,6 @@ const photoDirectory =
       const person = document.createElement('div');
       person.className = 'nomination-person';
       person.textContent = `⭐ ${nomination.person}`;
-
       info.appendChild(person);
 
       if (nomination.comment) {
@@ -629,163 +611,116 @@ const photoDirectory =
     }
 
     function createWinnerSection(day) {
-      if (!day.winner) {
+      const winners = getWinnerFiles(day);
+
+      if (winners.length === 0) {
         return null;
       }
 
-      const nominationList =
-        Array.isArray(day.nominations)
-          ? day.nominations
-          : [];
+      const nominationList = Array.isArray(day.nominations)
+        ? day.nominations
+        : [];
 
-      const winnerNomination =
-        nominationList.find(
-          nomination =>
-            nomination.photo === day.winner
+      const section = document.createElement('div');
+      section.className = 'winner-section';
+
+      winners.forEach((winnerFile, index) => {
+        const winnerNomination = nominationList.find(
+          nomination => nomination.photo === winnerFile
         );
 
-      const block = document.createElement('div');
-      block.className = 'winner-section';
+        const title = document.createElement('p');
+        title.className = 'winner-title';
 
-      const title = document.createElement('p');
-      title.className = 'winner-title';
-      title.textContent = winnerNomination
-        ? `👑 Vítěz dne – ${winnerNomination.person}`
-        : '👑 Vítěz dne';
+        const winnerNumber =
+          winners.length > 1 ? ` ${index + 1}` : '';
 
-      const imageButton =
-        document.createElement('button');
+        title.textContent = winnerNomination
+          ? `👑 Vítěz dne${winnerNumber} – ${winnerNomination.person}`
+          : `👑 Vítěz dne${winnerNumber}`;
 
-      imageButton.type = 'button';
-      imageButton.className =
-        'winner-image-button';
+        const imageButton = document.createElement('button');
+        imageButton.type = 'button';
+        imageButton.className = 'winner-image-button';
 
-      const image = document.createElement('img');
-      image.src = thumbnailUrl(day.winner, 1200);
-      image.alt =
-        `Vítězná fotografie – ${day.title || 'Fotka dne'}`;
-      image.loading = 'lazy';
-      image.decoding = 'async';
+        const image = document.createElement('img');
+        image.src = thumbnailUrl(winnerFile, 1200);
+        image.alt =
+          `Vítězná fotografie – ${day.title || 'Fotka dne'}`;
+        image.loading = 'lazy';
+        image.decoding = 'async';
 
-      attachThumbnailFallback(
-        image,
-        day.winner
-      );
+        attachThumbnailFallback(image, winnerFile);
 
-      imageButton.addEventListener(
-        'click',
-        () => {
-          openLightbox(
-            originalUrl(day.winner),
-            image.alt
-          );
-        }
-      );
+        imageButton.addEventListener('click', () => {
+          openLightbox(originalUrl(winnerFile), image.alt);
+        });
 
-      imageButton.appendChild(image);
-      block.appendChild(title);
-      block.appendChild(imageButton);
+        imageButton.appendChild(image);
+        section.appendChild(title);
+        section.appendChild(imageButton);
+      });
 
-      return block;
+      return section;
     }
 
     function renderPhotoOfDay(rawDays) {
-      const days =
-        normalizePhotoOfDayData(rawDays);
-
-      const islandDays = days.filter(
-        day => day.island === islandSlug
-      );
+      const islandDays = normalizePhotoOfDayData(rawDays)
+        .filter(day => day.island === islandSlug)
+        .sort((a, b) =>
+          String(a.date || '').localeCompare(String(b.date || ''))
+        );
 
       if (islandDays.length === 0) {
         photoOfDayContainer.innerHTML =
-          '<p class="status">' +
-          'Pro Flores zatím nejsou vybrané nominace.' +
-          '</p>';
+          '<p class="status">Pro tento den zatím nejsou vybrané nominace.</p>';
         return;
       }
 
       photoOfDayContainer.innerHTML = '';
 
-      islandDays
-        .sort(
-          (a, b) =>
-            String(a.date).localeCompare(
-              String(b.date)
+      islandDays.forEach(day => {
+        const block = document.createElement('div');
+        block.className = 'photo-day-block';
+
+        const heading = document.createElement('h3');
+        heading.className = 'photo-day-heading';
+        heading.textContent = day.title || 'Fotka dne';
+
+        const date = document.createElement('div');
+        date.className = 'photo-day-date';
+        date.textContent = formatDayDate(day.date);
+
+        block.appendChild(heading);
+        block.appendChild(date);
+
+        const nominationList = Array.isArray(day.nominations)
+          ? day.nominations.filter(
+              nomination => nomination.person && nomination.photo
             )
-        )
-        .forEach(day => {
-          const block =
-            document.createElement('div');
+          : [];
 
-          block.className =
-            'photo-day-block';
+        if (nominationList.length > 0) {
+          const nominations = document.createElement('div');
+          nominations.className = 'nominations';
 
-          const heading =
-            document.createElement('h3');
+          nominationList.forEach(nomination => {
+            nominations.appendChild(
+              createNominationCard(day, nomination)
+            );
+          });
 
-          heading.className =
-            'photo-day-heading';
+          block.appendChild(nominations);
+        }
 
-          heading.textContent =
-            day.title || 'Fotka dne';
+        const winnerSection = createWinnerSection(day);
 
-          const date =
-            document.createElement('div');
+        if (winnerSection) {
+          block.appendChild(winnerSection);
+        }
 
-          date.className =
-            'photo-day-date';
-
-          date.textContent =
-            formatDayDate(day.date);
-
-          const nominations =
-            document.createElement('div');
-
-          nominations.className =
-            'nominations';
-
-          const nominationList =
-            Array.isArray(day.nominations)
-              ? day.nominations
-              : [];
-
-          nominationList.forEach(
-            nomination => {
-              if (
-                !nomination.person ||
-                !nomination.photo
-              ) {
-                return;
-              }
-
-              nominations.appendChild(
-                createNominationCard(
-                  day,
-                  nomination
-                )
-              );
-            }
-          );
-
-          block.appendChild(heading);
-          block.appendChild(date);
-
-          if (nominationList.length > 0) {
-            block.appendChild(nominations);
-          }
-
-          const winner =
-            createWinnerSection(day);
-
-          if (winner) {
-            block.appendChild(winner);
-          }
-
-          photoOfDayContainer.appendChild(
-            block
-          );
-        });
+        photoOfDayContainer.appendChild(block);
+      });
     }
 
     function createAwardsIndex(days) {
@@ -793,97 +728,62 @@ const photoDirectory =
       const winners = new Set();
 
       normalizePhotoOfDayData(days)
-        .filter(
-          day => day.island === islandSlug
-        )
+        .filter(day => day.island === islandSlug)
         .forEach(day => {
           if (Array.isArray(day.nominations)) {
-            day.nominations.forEach(
-              nomination => {
-                if (nomination.photo) {
-                  nominations.add(
-                    nomination.photo
-                  );
-                }
+            day.nominations.forEach(nomination => {
+              if (nomination.photo) {
+                nominations.add(nomination.photo);
               }
-            );
+            });
           }
 
-          if (day.winner) {
-            winners.add(day.winner);
-          }
+          getWinnerFiles(day).forEach(fileName => {
+            winners.add(fileName);
+          });
         });
 
-      return {
-        nominations,
-        winners
-      };
+      return { nominations, winners };
     }
 
-    let map = null;
-    let markerLayer = null;
+    function initializeMap() {
+      if (typeof L === 'undefined') {
+        throw new Error('Knihovna Leaflet se nenačetla.');
+      }
 
-    const travelRoute = {
-  from: [37.741, -25.698],
-  to: [38.7742, -9.1342]
-};
+      map = L.map('map');
 
-function initializeMap() {
-  if (typeof L === 'undefined') {
-    throw new Error(
-      'Knihovna Leaflet se nenačetla.'
-    );
-  }
+      const positron = L.tileLayer(
+        'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+        {
+          maxZoom: 20,
+          attribution:
+            '&copy; OpenStreetMap přispěvatelé &copy; CARTO'
+        }
+      );
 
-  map = L.map('map');
+      const satellite = L.tileLayer(
+        'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+        {
+          maxZoom: 19,
+          attribution: 'Tiles &copy; Esri'
+        }
+      );
 
-  const routeBounds = [
-    travelRoute.from,
-    travelRoute.to
-  ];
+      positron.addTo(map);
 
-  map.fitBounds(routeBounds, {
-    padding: [40, 40]
-  });
+      L.control.layers(
+        {
+          '🗺 Mapa': positron,
+          '🛰 Satelit': satellite
+        },
+        {},
+        {
+          collapsed: false
+        }
+      ).addTo(map);
 
-  const positron = L.tileLayer(
-    'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
-    {
-      maxZoom: 20,
-      attribution:
-        '&copy; OpenStreetMap přispěvatelé &copy; CARTO'
-    }
-  );
-
-  const satellite = L.tileLayer(
-    'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-    {
-      maxZoom: 19,
-      attribution: 'Tiles &copy; Esri'
-    }
-  );
-
-  positron.addTo(map);
-
-  L.control.layers(
-    {
-      '🗺 Mapa': positron,
-      '🛰 Satelit': satellite
-    },
-    {},
-    {
-      collapsed: false
-    }
-  ).addTo(map);
-
-  markerLayer = L.layerGroup();
-  markerLayer.addTo(map);
-
-  // ... zbytek kódu (planeIcon, polyline, marker ...)
-} // <-- AŽ TADY má initializeMap() končit
-
-      markerLayer = L.layerGroup();
-      markerLayer.addTo(map);
+      markerLayer = L.layerGroup().addTo(map);
 
       const planeIcon = L.divIcon({
         className: 'plane-icon',
@@ -907,50 +807,52 @@ function initializeMap() {
         (travelRoute.from[1] + travelRoute.to[1]) / 2
       ];
 
-      L.marker(
-        middlePoint,
+      L.marker(middlePoint, {
+        icon: planeIcon,
+        interactive: false
+      }).addTo(map);
+
+      L.marker(travelRoute.from)
+        .bindTooltip('São Miguel', {
+          permanent: false,
+          direction: 'top'
+        })
+        .addTo(map);
+
+      L.marker(travelRoute.to)
+        .bindTooltip('Lisabon', {
+          permanent: false,
+          direction: 'top'
+        })
+        .addTo(map);
+
+      map.fitBounds(
+        [travelRoute.from, travelRoute.to],
         {
-          icon: planeIcon,
-          interactive: false
+          padding: [40, 40]
         }
-      ).addTo(map);
+      );
     }
 
     function createPopupContent(image) {
-      const wrapper =
-        document.createElement('div');
+      const wrapper = document.createElement('div');
 
-      const title =
-        document.createElement('p');
-
+      const title = document.createElement('p');
       title.className = 'popup-title';
-      title.textContent =
-        formatPhotoDate(image.takenAt);
+      title.textContent = formatPhotoDate(image.takenAt);
 
-      const thumbnail =
-        document.createElement('img');
-
+      const thumbnail = document.createElement('img');
       thumbnail.className = 'popup-photo';
-      thumbnail.src =
-        thumbnailUrl(image.file, 420);
+      thumbnail.src = thumbnailUrl(image.file, 420);
       thumbnail.alt =
-        image.alt || 'Sao Miguel -> Lisabon – Azory 2026';
+        image.alt || 'São Miguel → Lisabon – Azory 2026';
       thumbnail.loading = 'lazy';
 
-      attachThumbnailFallback(
-        thumbnail,
-        image.file
-      );
+      attachThumbnailFallback(thumbnail, image.file);
 
-      thumbnail.addEventListener(
-        'click',
-        () => {
-          openLightbox(
-            originalUrl(image.file),
-            thumbnail.alt
-          );
-        }
-      );
+      thumbnail.addEventListener('click', () => {
+        openLightbox(originalUrl(image.file), thumbnail.alt);
+      });
 
       wrapper.appendChild(title);
       wrapper.appendChild(thumbnail);
@@ -960,34 +862,26 @@ function initializeMap() {
 
     function renderMap(images) {
       const geotaggedImages = images
-        .filter(
-          image =>
-            image.hasGps === true &&
-            Number.isFinite(
-              Number(image.latitude)
-            ) &&
-            Number.isFinite(
-              Number(image.longitude)
-            )
+        .filter(image =>
+          image &&
+          image.hasGps === true &&
+          Number.isFinite(Number(image.latitude)) &&
+          Number.isFinite(Number(image.longitude))
         )
-        .map(
-          image => ({
-            ...image,
-            latitude: Number(image.latitude),
-            longitude: Number(image.longitude)
-          })
-        );
+        .map(image => ({
+          ...image,
+          latitude: Number(image.latitude),
+          longitude: Number(image.longitude)
+        }));
 
       gpsCount.textContent =
         `(${geotaggedImages.length} z ${images.length} fotografií)`;
 
-      if (
-        geotaggedImages.length === 0 ||
-        !map ||
-        !markerLayer
-      ) {
+      if (!map || !markerLayer) {
         return;
       }
+
+      markerLayer.clearLayers();
 
       const bounds = [
         travelRoute.from,
@@ -1001,18 +895,9 @@ function initializeMap() {
         ]);
 
         marker.bindPopup(
-          '<p>Načítám náhled…</p>',
+          createPopupContent(image),
           {
             maxWidth: 250
-          }
-        );
-
-        marker.on(
-          'popupopen',
-          () => {
-            marker.setPopupContent(
-              createPopupContent(image)
-            );
           }
         );
 
@@ -1044,104 +929,78 @@ function initializeMap() {
         winners: new Set()
       }
     ) {
-      photoCount.textContent =
-        `(${images.length})`;
-
+      photoCount.textContent = `(${images.length})`;
       gallery.innerHTML = '';
 
+      if (images.length === 0) {
+        gallery.innerHTML =
+          '<p class="status">V galerii zatím nejsou žádné fotografie.</p>';
+        return;
+      }
+
       images.forEach(image => {
-        const original =
-          originalUrl(image.file);
+        if (!image || !image.file) {
+          return;
+        }
 
+        const original = originalUrl(image.file);
         const alt =
-          image.alt ||
-          'Sao Miguel -> Lisabon – Azory 2026';
+          image.alt || 'São Miguel → Lisabon – Azory 2026';
 
-        const button =
-          document.createElement('button');
-
+        const button = document.createElement('button');
         button.type = 'button';
-        button.className =
-          'gallery-button';
+        button.className = 'gallery-button';
 
-        const img =
-          document.createElement('img');
-
-        img.src =
-          thumbnailUrl(image.file, 650);
+        const img = document.createElement('img');
+        img.src = thumbnailUrl(image.file, 650);
         img.alt = alt;
         img.loading = 'lazy';
         img.decoding = 'async';
 
-        attachThumbnailFallback(
-          img,
-          image.file
-        );
-
+        attachThumbnailFallback(img, image.file);
         button.appendChild(img);
 
         if (image.hasGps === true) {
-          const badge =
-            document.createElement('span');
-
+          const badge = document.createElement('span');
           badge.className = 'gps-badge';
           badge.textContent = '📍 mapa';
           button.appendChild(badge);
         }
 
-        if (
-          awards.winners.has(image.file)
-        ) {
-          const award =
-            document.createElement('span');
-
+        if (awards.winners.has(image.file)) {
+          const award = document.createElement('span');
           award.className = 'award-badge';
           award.textContent = '👑 Vítěz';
           button.appendChild(award);
-        } else if (
-          awards.nominations.has(image.file)
-        ) {
-          const award =
-            document.createElement('span');
-
+        } else if (awards.nominations.has(image.file)) {
+          const award = document.createElement('span');
           award.className = 'award-badge';
           award.textContent = '⭐ Nominace';
           button.appendChild(award);
         }
 
-        button.addEventListener(
-          'click',
-          () => {
-            openLightbox(
-              original,
-              alt
-            );
-          }
-        );
+        button.addEventListener('click', () => {
+          openLightbox(original, alt);
+        });
 
         gallery.appendChild(button);
       });
     }
 
     async function fetchJson(url, label) {
-      const response = await fetch(
-        url,
-        {
-          cache: 'no-store'
-        }
-      );
+      const response = await fetch(url, {
+        cache: 'no-store'
+      });
 
       if (!response.ok) {
-        throw new Error(
-          `${label}: HTTP ${response.status}`
-        );
+        throw new Error(`${label}: HTTP ${response.status}`);
       }
 
       return response.json();
     }
 
     async function loadPageData() {
-      let galleryData = null;
+      let galleryData;
       let photoOfDayData = [];
 
       try {
@@ -1150,22 +1009,16 @@ function initializeMap() {
           'Galerie'
         );
 
-        if (!Array.isArray(galleryData.images)) {
-          throw new Error(
-            'Galerie má neplatný formát.'
-          );
+        if (!galleryData || !Array.isArray(galleryData.images)) {
+          throw new Error('Galerie má neplatný formát.');
         }
       } catch (error) {
         console.error(error);
 
         gallery.innerHTML =
-          '<p class="error-box">' +
-          'Fotografie se nepodařilo načíst.' +
-          '</p>';
+          '<p class="error-box">Fotografie se nepodařilo načíst.</p>';
 
-        gpsCount.textContent =
-          '(mapu nelze načíst)';
-
+        gpsCount.textContent = '(mapu nelze načíst)';
         return;
       }
 
@@ -1175,27 +1028,17 @@ function initializeMap() {
           'Fotka dne'
         );
 
-        renderPhotoOfDay(
-          photoOfDayData
-        );
+        renderPhotoOfDay(photoOfDayData);
       } catch (error) {
         console.error(error);
 
         photoOfDayContainer.innerHTML =
-          '<p class="error-box">' +
-          'Nominace se nepodařilo načíst.' +
-          '</p>';
+          '<p class="error-box">Nominace se nepodařilo načíst.</p>';
       }
 
-      const awards =
-        createAwardsIndex(
-          photoOfDayData
-        );
+      const awards = createAwardsIndex(photoOfDayData);
 
-      renderGallery(
-        galleryData.images,
-        awards
-      );
+      renderGallery(galleryData.images, awards);
 
       try {
         initializeMap();
@@ -1206,13 +1049,9 @@ function initializeMap() {
         gpsCount.textContent =
           '(mapu se nepodařilo spustit)';
 
-        const mapElement =
-          document.getElementById('map');
-
+        const mapElement = document.getElementById('map');
         mapElement.innerHTML =
-          '<p class="error-box">' +
-          'Mapu se nepodařilo načíst.' +
-          '</p>';
+          '<p class="error-box">Mapu se nepodařilo načíst.</p>';
       }
     }
 
@@ -1221,26 +1060,20 @@ function initializeMap() {
       closeLightbox
     );
 
-    lightbox.addEventListener(
-      'click',
-      event => {
-        if (
-          event.target === lightbox ||
-          event.target === lightboxImage
-        ) {
-          closeLightbox();
-        }
+    lightbox.addEventListener('click', event => {
+      if (
+        event.target === lightbox ||
+        event.target === lightboxImage
+      ) {
+        closeLightbox();
       }
-    );
+    });
 
-    document.addEventListener(
-      'keydown',
-      event => {
-        if (event.key === 'Escape') {
-          closeLightbox();
-        }
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape') {
+        closeLightbox();
       }
-    );
+    });
 
     loadPageData();
   </script>
